@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-func ThreeNumsCalc(a, b, c int) {
+func threeNumsCalc(a, b, c int) {
 	af := float64(a)
 	bf := float64(b)
 	cf := float64(c)
