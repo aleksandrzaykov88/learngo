@@ -6,4 +6,5 @@ func main() {
 	//fibonacci(10)
 	//fmt.Println(factorial(5))
 	//quadraticEquationRoots(6, 1, -2)
+	tabSinX(0, 5, 0.2)
 }
