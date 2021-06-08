@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/aleksandrzaykov88/keyboard"
+	"github.com/aleksandrzaykov88/packagesgo/headfirstgo/keyboard"
 )
 
 func main() {
