@@ -1,16 +1,14 @@
-//pass_fail tells us about success or unsuccess of student's examinations
 package main
 
 import (
 	"fmt"
 	"log"
-
-	"github.com/aleksandrzaykov88/packagesgo/headfirstgo/keyboard"
 )
 
-func main() {
+//passOrFail() tells us about success or unsuccess of student's examinations.
+func passOrFail() {
 	fmt.Print("Enter a grade: ")
-	grade, err := keyboard.GetFloat()
+	grade, err := getFloat()
 	if err != nil {
 		log.Fatal(err)
 	}

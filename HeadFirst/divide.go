@@ -2,21 +2,12 @@ package main
 
 import (
 	"errors"
-	"fmt"
 )
 
+//divide() returns the result of dividing the first argument by the second.
 func divide(divident float64, divisor float64) (float64, error) {
 	if divisor == 0.0 {
 		return 0, errors.New("can't divide by 0")
 	}
 	return divident / divisor, nil
-}
-
-func main() {
-	quotient, err := divide(5.6, 1)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("%0.2f\n", quotient)
-	}
 }

@@ -7,5 +7,5 @@ func main() {
 	//fmt.Println(factorial(5))
 	//quadraticEquationRoots(6, 1, -2)
 	//tabSinX(0, 5, 0.2)
-	linearSystemEquationCalc(7, 6, -42, 3.5, 3, -21)
+	linearSystemEquationCalc([3]float64{7, 6, -42}, [3]float64{3.5, 3, -21})
 }

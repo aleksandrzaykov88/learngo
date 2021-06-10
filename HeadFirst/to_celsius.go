@@ -1,16 +1,14 @@
-//This function converts fahrenheit temperature into celsius
 package main
 
 import (
 	"fmt"
 	"log"
-
-	"github.com/aleksandrzaykov88/packagesgo/headfirstgo/keyboard"
 )
 
-func main() {
+//toCelsius() converts fahrenheit temperature into celsius.
+func toCelsius() {
 	fmt.Print("Enter a temperature in Fahrenheit: ")
-	fahrenheit, err := keyboard.GetFloat()
+	fahrenheit, err := getFloat()
 	if err != nil {
 		log.Fatal(err)
 	}

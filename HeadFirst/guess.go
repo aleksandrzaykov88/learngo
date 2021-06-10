@@ -1,4 +1,3 @@
-//This is classic guess game. Player should guess some number from 1 to 100 for 10 tries
 package main
 
 import (
@@ -12,7 +11,8 @@ import (
 	"time"
 )
 
-func main() {
+//guess() classic guess game. Player should guess some number from 1 to 100 for 10 tries.
+func guess() {
 	seconds := time.Now().Unix()
 	rand.Seed(seconds)
 	target := rand.Intn(100) + 1

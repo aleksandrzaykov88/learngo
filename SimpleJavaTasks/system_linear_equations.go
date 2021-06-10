@@ -18,6 +18,8 @@ func linearSystemSolutionsNumberCheck(a1, b1, c1, a2, b2, c2 float64) string {
 }
 
 //linearSystemEquationCalc() solves a system of two linear equations in real numbers.
-func linearSystemEquationCalc(a1, b1, c1, a2, b2, c2 float64) {
-	linearSystemSolutionsNumberCheck(a1, b1, c1, a2, b2, c2)
+func linearSystemEquationCalc(f [3]float64, s [3]float64) {
+	fmt.Println(f)
+	fmt.Println(s)
+	linearSystemSolutionsNumberCheck(f[0], f[1], f[2], s[0], s[1], s[2])
 }
