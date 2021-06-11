@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+func gaussElimination() {
+
+}
+
 //linearSystemSolutionsNumberCheck ()checks the number of solutions of a system of linear equations
 func linearSystemSolutionsNumberCheck(a1, b1, c1, a2, b2, c2 float64) string {
 	if a1*b2 != a2*b1 {
@@ -18,8 +22,22 @@ func linearSystemSolutionsNumberCheck(a1, b1, c1, a2, b2, c2 float64) string {
 }
 
 //linearSystemEquationCalc() solves a system of two linear equations in real numbers.
-func linearSystemEquationCalc(f [3]float64, s [3]float64) {
-	fmt.Println(f)
-	fmt.Println(s)
-	linearSystemSolutionsNumberCheck(f[0], f[1], f[2], s[0], s[1], s[2])
+func linearSystemEquationCalc(matrix [2][2]float64, freeMemb [2]float64) {
+	linearSystemSolutionsNumberCheck(matrix[0][0], matrix[0][1], freeMemb[0], matrix[1][0], matrix[1][1], freeMemb[1])
+	n := len(freeMemb)
+	//x := make([]float64, n)
+	for k := 0; k <= (n - 2); k++ {
+		for i := (k + 1); i < n; i++ {
+			if matrix[i][k] == 0 {
+				continue
+			}
+			factor := matrix[k][k] / matrix[i][k]
+			for j := k; j < n; j++ {
+				matrix[i][j] = matrix[k][j] - matrix[i][j]*factor
+			}
+			freeMemb[i] = freeMemb[k] - freeMemb[i]*factor
+		}
+	}
+	fmt.Println(matrix)
+	fmt.Println(freeMemb)
 }
