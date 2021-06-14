@@ -23,9 +23,11 @@ func linearSystemSolutionsNumberCheck(a1, b1, c1, a2, b2, c2 float64) string {
 
 //linearSystemEquationCalc() solves a system of two linear equations in real numbers.
 func linearSystemEquationCalc(matrix [2][2]float64, freeMemb [2]float64) {
-	linearSystemSolutionsNumberCheck(matrix[0][0], matrix[0][1], freeMemb[0], matrix[1][0], matrix[1][1], freeMemb[1])
+	if amount := linearSystemSolutionsNumberCheck(matrix[0][0], matrix[0][1], freeMemb[0], matrix[1][0], matrix[1][1], freeMemb[1]); amount == "No" {
+		return
+	}
 	n := len(freeMemb)
-	//x := make([]float64, n)
+	x := make([]float64, n)
 	for k := 0; k <= (n - 2); k++ {
 		for i := (k + 1); i < n; i++ {
 			if matrix[i][k] == 0 {
@@ -38,6 +40,13 @@ func linearSystemEquationCalc(matrix [2][2]float64, freeMemb [2]float64) {
 			freeMemb[i] = freeMemb[k] - freeMemb[i]*factor
 		}
 	}
-	fmt.Println(matrix)
-	fmt.Println(freeMemb)
+	x[n-1] = freeMemb[n-1] / matrix[n-1][n-1]
+	for i := (n - 2); i >= 0; i-- {
+		var sum_ax float64 = 0
+		for j := (i + 1); j < n; j++ {
+			sum_ax += matrix[i][j] * x[j]
+		}
+		x[i] = (freeMemb[i] - sum_ax) / matrix[i][i]
+	}
+	fmt.Println(x)
 }
