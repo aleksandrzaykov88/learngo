@@ -12,6 +12,6 @@ func main() {
 	//double(&num)
 	//fmt.Println(squareRoot(100))
 	//toCelsius()
-	//average()
-	readFile()
+	average()
+	//readFile()
 }
