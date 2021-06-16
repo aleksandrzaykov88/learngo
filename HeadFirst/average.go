@@ -8,30 +8,28 @@ import (
 	"strconv"
 )
 
-//getFloats() reads floats from .txt file.
-func getFloats(fileName string) ([3]float64, error) {
-	var numbers [3]float64
+func getFloats(fileName string) ([]float64, error) {
+	var numbers []float64
 	file, err := os.Open(fileName)
 	if err != nil {
-		return numbers, err
+		return nil, err
 	}
-	i := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		numbers[i], err = strconv.ParseFloat(scanner.Text(), 64)
+		number, err := strconv.ParseFloat(scanner.Text(), 64)
 		if err != nil {
-			return numbers, err
+			return nil, err
 		}
-		i++
+		numbers = append(numbers, number)
 	}
 	err = file.Close()
 	if err != nil {
-		return numbers, err
+		return nil, err
 	}
 	if scanner.Err() != nil {
-		return numbers, scanner.Err()
+		return nil, scanner.Err()
 	}
-	return numbers, err
+	return numbers, nil
 }
 
 //average() prints average of number set imports from file.
