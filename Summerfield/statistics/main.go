@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"sort"
 	"strconv"
@@ -24,9 +25,11 @@ const (
 )
 
 type statistics struct {
-	numbers []float64
-	mean    float64
-	median  float64
+	numbers   []float64
+	mean      float64
+	median    float64
+	deviation float64
+	modalMean []float64
 }
 
 func main() {
@@ -77,7 +80,9 @@ func formatStats(stats statistics) string {
 <tr><td>Count</td><td>%d</td></tr>
 <tr><td>Mean</td><td>%f</td></tr>
 <tr><td>Median</td><td>%f</td></tr>
-</table>`, stats.numbers, len(stats.numbers), stats.mean, stats.median)
+<tr><td>Mode</td><td>%f</td></tr>
+<tr><td>Std. Dev.</td><td>%v</td></tr>
+</table>`, stats.numbers, len(stats.numbers), stats.mean, stats.median, stats.deviation, stats.modalMean)
 }
 
 func getStats(numbers []float64) (stats statistics) {
@@ -85,6 +90,8 @@ func getStats(numbers []float64) (stats statistics) {
 	sort.Float64s(stats.numbers)
 	stats.mean = sum(numbers) / float64(len(numbers))
 	stats.median = median(numbers)
+	stats.deviation = stdDev(numbers)
+	stats.modalMean = modalMean(numbers)
 	return stats
 }
 
@@ -102,4 +109,46 @@ func median(numbers []float64) float64 {
 		result = (result + numbers[middle-1]) / 2
 	}
 	return result
+}
+
+func maximum(numbers []int) int {
+	max := int(math.Inf(-1))
+	for _, num := range numbers {
+		if num > max {
+			max = num
+		}
+	}
+	return max
+}
+
+func modalMean(numbers []float64) []float64 {
+	counts := make(map[float64]int)
+	result := make([]float64, 0)
+	coincidence := make([]int, 0)
+	for _, num := range numbers {
+		counts[num]++
+	}
+	for _, v := range counts {
+		coincidence = append(coincidence, v)
+	}
+	if len(coincidence) != len(numbers) {
+		for k, v := range counts {
+			if v == maximum(coincidence) {
+				result = append(result, k)
+			}
+		}
+		return result
+	}
+	return nil
+}
+
+func stdDev(numbers []float64) float64 {
+	var deviation float64
+	median := sum(numbers) / float64(len(numbers))
+	sum := 0.0
+	for _, num := range numbers {
+		sum += math.Pow(num-median, 2)
+	}
+	deviation = math.Sqrt(sum / float64((len(numbers) - 1)))
+	return deviation
 }
