@@ -4,12 +4,30 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"unicode/utf8"
 )
 
 type Date struct {
 	year  int
 	month int
 	day   int
+}
+
+type Event struct {
+	title string
+	Date
+}
+
+func (e *Event) Title() string {
+	return e.title
+}
+
+func (e *Event) SetTitle(title string) error {
+	if utf8.RuneCountInString(title) > 30 {
+		return errors.New("invalid title")
+	}
+	e.title = title
+	return nil
 }
 
 func (d *Date) Year() int {
@@ -49,20 +67,24 @@ func (d *Date) SetDay(day int) error {
 }
 
 func remindDate() {
-	date := Date{}
-	err := date.SetYear(2021)
+	event := Event{}
+	err := event.SetTitle("An extremely long and impractical title")
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = date.SetMonth(12)
+	err = event.SetYear(2021)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = date.SetDay(27)
+	err = event.SetMonth(12)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(date.Year())
-	fmt.Println(date.Month())
-	fmt.Println(date.Day())
+	err = event.SetDay(27)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(event.Year())
+	fmt.Println(event.Month())
+	fmt.Println(event.Day())
 }
