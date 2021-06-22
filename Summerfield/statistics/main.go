@@ -80,9 +80,9 @@ func formatStats(stats statistics) string {
 <tr><td>Count</td><td>%d</td></tr>
 <tr><td>Mean</td><td>%f</td></tr>
 <tr><td>Median</td><td>%f</td></tr>
-<tr><td>Mode</td><td>%v</td></tr>
-<tr><td>Std. Dev.</td><td>%f</td></tr>
-</table>`, stats.numbers, len(stats.numbers), stats.mean, stats.median, stats.modalMean, stats.deviation)
+<tr><td>Mode</td><td>%f</td></tr>
+<tr><td>Std. Dev.</td><td>%v</td></tr>
+</table>`, stats.numbers, len(stats.numbers), stats.mean, stats.median, stats.deviation, stats.modalMean)
 }
 
 func getStats(numbers []float64) (stats statistics) {
