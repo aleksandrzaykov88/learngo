@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"math/cmplx"
 	"net/http"
 	"strconv"
 	"strings"
@@ -57,24 +58,50 @@ func main() {
 	}
 }
 
-func formatStats(stats []float64) string {
-	return fmt.Sprintf(`<table border="1">
-<tr><th colspan="2">Results</th></tr>
-<tr><td>Roots: </td><td>%v</td></tr>
-</table>`, stats)
+func formatInput(num float64, numArg string) string {
+	var str string
+	if num < 0 {
+		str = strconv.FormatFloat(-num, 'f', -1, 64)
+	}
+	str = strconv.FormatFloat(num, 'f', -1, 64)
+	if numArg == "fArg" {
+		str = str + "x<sup>2</sup>"
+	} else if numArg == "sArg" {
+		str = str + "x"
+	}
+	if num > 0 && numArg != "fArg" {
+		return " + " + str
+	} else if num < 0 && numArg != "fArg" {
+		return " - " + str
+	} else {
+		return ""
+	}
 }
 
-func quadraticEquationRootsCalc(odds []float64) (float64, float64) {
+func formatResult(numbers []float64, roots []complex128) string {
+	a := formatInput(numbers[0], "fArg")
+	b := formatInput(numbers[1], "sArg")
+	c := formatInput(numbers[2], "tArg")
+	return fmt.Sprintf(`%s%s%s → %v</span>`, a, b, c, roots)
+}
+
+func quadraticEquationRootsCalc(odds []float64) (complex128, complex128) {
 	a := odds[0]
 	b := odds[1]
 	c := odds[2]
 	D := math.Pow(b, 2) - 4*a*c
-	return (-(b) + math.Sqrt(D)) / (2 * a), (-(b) - math.Sqrt(D)) / (2 * a)
+	if D < 0 {
+		ac := complex(odds[0], 0)
+		bc := complex(odds[1], 0)
+		Dc := complex(math.Pow(b, 2)-4*a*c, 0)
+		return (-(bc) + cmplx.Sqrt(Dc)) / (2 * ac), (-(bc) - cmplx.Sqrt(Dc)) / (2 * ac)
+	}
+	return complex((-(b)+math.Sqrt(D))/(2*a), 0), complex((-(b)-math.Sqrt(D))/(2*a), 0)
 }
 
-func getStats(numbers []float64) (stats []float64) {
+func getRoots(numbers []float64) (roots []complex128) {
 	x1, x2 := quadraticEquationRootsCalc(numbers)
-	var nums []float64
+	var nums []complex128
 	nums = append(nums, x1, x2)
 	return nums
 }
@@ -86,8 +113,8 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
 		fmt.Fprintf(writer, anError, err)
 	} else {
 		if numbers, message, ok := processRequest(request); ok {
-			stats := getStats(numbers)
-			fmt.Fprint(writer, formatStats(stats))
+			roots := getRoots(numbers)
+			fmt.Fprint(writer, formatResult(numbers, roots))
 		} else if message != "" {
 			fmt.Fprintf(writer, anError, message)
 		}
