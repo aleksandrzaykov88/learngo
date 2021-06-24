@@ -2,6 +2,11 @@ package main
 
 import "fmt"
 
+type Player interface {
+	Play(string)
+	Stop()
+}
+
 type TapePlayer struct {
 	Batteries string
 }
@@ -30,15 +35,25 @@ func (t TapeRecorder) Stop() {
 	fmt.Println("Stopped!")
 }
 
-func playList(device TapePlayer, songs []string) {
+func playList(device Player, songs []string) {
 	for _, song := range songs {
 		device.Play(song)
 	}
 	device.Stop()
 }
 
+func tryOut(player Player) {
+	player.Play("Test Track!")
+	player.Stop()
+	recorder, ok := player.(TapeRecorder)
+	if ok {
+		recorder.Record()
+	}
+}
+
 func main() {
-	player := TapePlayer{}
-	mixtape := []string{"Jessie's Girl", "Whip It", "9 to 5"}
-	playList(player, mixtape)
+	p := TapePlayer{}
+	r := TapeRecorder{}
+	tryOut(p)
+	tryOut(r)
 }

@@ -60,29 +60,45 @@ func main() {
 
 func formatInput(num float64, numArg string) string {
 	var str string
-	if num < 0 {
-		str = strconv.FormatFloat(-num, 'f', -1, 64)
-	}
 	str = strconv.FormatFloat(num, 'f', -1, 64)
+	if num < 0 && numArg != "fArg" {
+		str = strconv.FormatFloat(num*(-1), 'f', -1, 64)
+	}
 	if numArg == "fArg" {
 		str = str + "x<sup>2</sup>"
 	} else if numArg == "sArg" {
 		str = str + "x"
 	}
-	if num > 0 && numArg != "fArg" {
+	if num >= 0 && numArg != "fArg" {
 		return " + " + str
 	} else if num < 0 && numArg != "fArg" {
 		return " - " + str
 	} else {
-		return ""
+		return str
 	}
 }
 
+func realOrCmplx(num complex128) string {
+	if imag(num) == 0 {
+		fNum := math.Round(real(num)*1000) / 1000
+		return strconv.FormatFloat(fNum, 'f', -1, 64)
+	}
+	return fmt.Sprintf("%v", num)
+}
+
 func formatResult(numbers []float64, roots []complex128) string {
+	result := "x = "
+	x1 := realOrCmplx(roots[0])
+	x2 := realOrCmplx(roots[1])
+	if roots[0] == roots[1] {
+		result += x1
+	} else {
+		result = result + x1 + " or " + result + x2
+	}
 	a := formatInput(numbers[0], "fArg")
 	b := formatInput(numbers[1], "sArg")
 	c := formatInput(numbers[2], "tArg")
-	return fmt.Sprintf(`%s%s%s → %v</span>`, a, b, c, roots)
+	return fmt.Sprintf(`%s%s%s → %s</span>`, a, b, c, result)
 }
 
 func quadraticEquationRootsCalc(odds []float64) (complex128, complex128) {
@@ -138,6 +154,9 @@ func processRequest(request *http.Request) ([]float64, string, bool) {
 	}
 	if len(nums) < 3 {
 		return nums, "", false
+	}
+	if nums[0] == 0 {
+		return nums, "This is not a quadratic equation.", false
 	}
 	return nums, "", true
 }
