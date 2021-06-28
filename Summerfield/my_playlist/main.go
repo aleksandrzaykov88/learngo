@@ -16,12 +16,39 @@ type Song struct {
 	Seconds  int
 }
 
-func readPlsPlaylist() {
-	fmt.Println("Reading pls-playlist...")
+func readPlsPlaylist(data string) (songs []Song) {
+	var song Song
+	for _, line := range strings.Split(data, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "[playlist]") {
+			continue
+		}
+		if strings.HasPrefix(line, "Title") {
+			song.Title = line
+		}
+		if strings.HasPrefix(line, "Length") {
+			song.Seconds = 111
+		}
+		if strings.HasPrefix(line, "File") {
+			song.Filename = line
+		}
+		if song.Filename != "" && song.Title != "" && song.Seconds != 0 {
+			songs = append(songs, song)
+			song = Song{}
+		}
+	}
+	return songs
 }
 
-func writeM3uPlaylist() {
-	fmt.Println("Writing pls-playlist...")
+func writeM3uPlaylist(songs []Song) {
+	fmt.Println("#EXTM3U")
+	for i, song := range songs {
+		i++
+		fmt.Printf("File%d=%s\n", i, song.Filename)
+		fmt.Printf("Title%d=%s\n", i, song.Title)
+		fmt.Printf("Length%d=%d\n", i, song.Seconds)
+	}
+	fmt.Printf("NumberOfEntries=%d\nVersion=2\n", len(songs))
 }
 
 func readM3uPlaylist(data string) (songs []Song) {
@@ -96,8 +123,8 @@ func main() {
 			songs := readM3uPlaylist(string(rawBytes))
 			writePlsPlaylist(songs)
 		} else if plsF {
-			readPlsPlaylist()
-			writeM3uPlaylist()
+			songs := readPlsPlaylist(string(rawBytes))
+			writeM3uPlaylist(songs)
 		}
 	}
 }
