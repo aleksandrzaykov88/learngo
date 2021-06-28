@@ -16,6 +16,14 @@ type Song struct {
 	Seconds  int
 }
 
+func readPlsPlaylist() {
+	fmt.Println("Reading pls-playlist...")
+}
+
+func writeM3uPlaylist() {
+	fmt.Println("Writing pls-playlist...")
+}
+
 func readM3uPlaylist(data string) (songs []Song) {
 	var song Song
 	for _, line := range strings.Split(data, "\n") {
@@ -34,6 +42,17 @@ func readM3uPlaylist(data string) (songs []Song) {
 		}
 	}
 	return songs
+}
+
+func writePlsPlaylist(songs []Song) {
+	fmt.Println("[playlist]")
+	for i, song := range songs {
+		i++
+		fmt.Printf("File%d=%s\n", i, song.Filename)
+		fmt.Printf("Title%d=%s\n", i, song.Title)
+		fmt.Printf("Length%d=%d\n", i, song.Seconds)
+	}
+	fmt.Printf("NumberOfEntries=%d\nVersion=2\n", len(songs))
 }
 
 func parseExtinfLine(line string) (title string, seconds int) {
@@ -59,26 +78,26 @@ func mapPlatformDirSeparator(char rune) rune {
 	return char
 }
 
-func writePlsPlaylist(songs []Song) {
-	fmt.Println("[playlist]")
-	for i, song := range songs {
-		i++
-		fmt.Printf("File%d=%s\n", i, song.Filename)
-		fmt.Printf("Title%d=%s\n", i, song.Title)
-		fmt.Printf("Length%d=%d\n", i, song.Seconds)
-	}
-	fmt.Printf("NumberOfEntries=%d\nVersion=2\n", len(songs))
-}
-
 func main() {
-	if len(os.Args) == 1 || !strings.HasSuffix(os.Args[1], ".m3u") {
-		fmt.Printf("usage: %s <file.m3u>\n", filepath.Base(os.Args[0]))
+	var m3uF, plsF bool
+	if len(os.Args) == 1 || !strings.HasSuffix(os.Args[1], ".m3u") && !strings.HasSuffix(os.Args[1], ".pls") {
+		fmt.Printf("usage: %s <file.m3u> or <file.pls>\n", filepath.Base(os.Args[0]))
 		os.Exit(1)
+	}
+	if strings.HasSuffix(os.Args[1], ".pls") {
+		plsF = true
+	} else {
+		m3uF = true
 	}
 	if rawBytes, err := ioutil.ReadFile(os.Args[1]); err != nil {
 		log.Fatal(err)
 	} else {
-		songs := readM3uPlaylist(string(rawBytes))
-		writePlsPlaylist(songs)
+		if m3uF {
+			songs := readM3uPlaylist(string(rawBytes))
+			writePlsPlaylist(songs)
+		} else if plsF {
+			readPlsPlaylist()
+			writeM3uPlaylist()
+		}
 	}
 }
