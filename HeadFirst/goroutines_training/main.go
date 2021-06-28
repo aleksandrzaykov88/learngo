@@ -7,7 +7,12 @@ import (
 	"net/http"
 )
 
-func responseSize(url string) {
+type Page struct {
+	URL  string
+	Size int
+}
+
+func responseSize(url string, channel chan Page) {
 	fmt.Println("Getting", url)
 	response, err := http.Get(url)
 	if err != nil {
@@ -18,11 +23,17 @@ func responseSize(url string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(len(body))
+	channel <- Page{URL: url, Size: len(body)}
 }
 
 func main() {
-	responseSize("https://dominantamusic.ru")
-	responseSize("https://www.muztorg.ru/")
-	responseSize("https://jazz-shop.ru/omsk")
+	pages := make(chan Page)
+	urls := []string{"https://dominantamusic.ru", "https://www.muztorg.ru/", "https://jazz-shop.ru/omsk"}
+	for _, url := range urls {
+		go responseSize(url, pages)
+	}
+	for i := 0; i < len(urls); i++ {
+		page := <-pages
+		fmt.Printf("%s: %d\n", page.URL, page.Size)
+	}
 }
