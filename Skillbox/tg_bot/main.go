@@ -100,6 +100,7 @@ func main() {
 			amount, err := strconv.ParseFloat(command[2], 64)
 			if err != nil {
 				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, err.Error()))
+				break
 			}
 			if _, ok := db[update.Message.Chat.ID]; !ok {
 				db[update.Message.Chat.ID] = wallet{}
@@ -115,6 +116,7 @@ func main() {
 			amount, err := strconv.ParseFloat(command[2], 64)
 			if err != nil {
 				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, err.Error()))
+				break
 			}
 			if _, ok := db[update.Message.Chat.ID]; !ok {
 				continue
@@ -140,6 +142,7 @@ func main() {
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		default:
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Команда не найдена"))
+			break
 		}
 	}
 }
