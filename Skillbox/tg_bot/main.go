@@ -95,6 +95,7 @@ func main() {
 		case "ADD":
 			if len(command) != 3 {
 				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Неверная команда"))
+				break
 			}
 			amount, err := strconv.ParseFloat(command[2], 64)
 			if err != nil {
@@ -109,6 +110,7 @@ func main() {
 		case "SUB":
 			if len(command) != 3 {
 				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Неверная команда"))
+				break
 			}
 			amount, err := strconv.ParseFloat(command[2], 64)
 			if err != nil {
@@ -123,6 +125,7 @@ func main() {
 		case "DEL":
 			if len(command) != 2 {
 				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Неверная команда"))
+				break
 			}
 			delete(db[update.Message.Chat.ID], command[1])
 		case "SHOW":
