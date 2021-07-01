@@ -22,14 +22,6 @@ func (e *Event) Title() string {
 	return e.title
 }
 
-func (e *Event) SetTitle(title string) error {
-	if utf8.RuneCountInString(title) > 30 {
-		return errors.New("invalid title")
-	}
-	e.title = title
-	return nil
-}
-
 func (d *Date) Year() int {
 	return d.year
 }
@@ -66,6 +58,15 @@ func (d *Date) SetDay(day int) error {
 	return nil
 }
 
+func (e *Event) SetTitle(title string) error {
+	if utf8.RuneCountInString(title) > 30 {
+		return errors.New("invalid title")
+	}
+	e.title = title
+	return nil
+}
+
+//remindDate remembers some special date.
 func remindDate() {
 	event := Event{}
 	err := event.SetTitle("An extremely long and impractical title")

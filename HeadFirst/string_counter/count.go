@@ -20,3 +20,7 @@ func countStrings() {
 		fmt.Printf("Votes for %s: %d\n", name, count)
 	}
 }
+
+func main() {
+	countStrings()
+}

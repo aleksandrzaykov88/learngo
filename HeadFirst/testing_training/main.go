@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+//joinWithCommas add words separating by commas in the end of the phrase.
+//if amount of additional phrases < 3 there is some special rules.
 func joinWithCommas(phrases []string) string {
 	if len(phrases) == 0 {
 		return ""

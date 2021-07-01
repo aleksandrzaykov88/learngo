@@ -35,6 +35,7 @@ func (t TapeRecorder) Stop() {
 	fmt.Println("Stopped!")
 }
 
+//PlayList get music player device and plays songs.
 func playList(device Player, songs []string) {
 	for _, song := range songs {
 		device.Play(song)
@@ -42,6 +43,7 @@ func playList(device Player, songs []string) {
 	device.Stop()
 }
 
+//tryOut tests music player device.
 func tryOut(player Player) {
 	player.Play("Test Track!")
 	player.Stop()

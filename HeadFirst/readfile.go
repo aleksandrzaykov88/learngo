@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-//readFile() reads .txt file and print it line by line.
+//readFile reads .txt file and print it line by line.
 func readFile() {
 	file, err := os.Open("C:/Users/admin/Documents/azaykov/data.txt")
 	if err != nil {

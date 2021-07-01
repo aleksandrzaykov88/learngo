@@ -19,7 +19,7 @@ func reportPanic() {
 	}
 }
 
-//scanDirectory() is a recursion function that scans some catalog and prints it content.
+//scanDirectory is a recursion function that scans some catalog and prints it content.
 func scanDirectory(path string) {
 	fmt.Println(path)
 	files, err := ioutil.ReadDir(path)

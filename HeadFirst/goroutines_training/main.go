@@ -12,6 +12,7 @@ type Page struct {
 	Size int
 }
 
+//responseSize get some URL and returns its length in out channel.
 func responseSize(url string, channel chan Page) {
 	fmt.Println("Getting", url)
 	response, err := http.Get(url)

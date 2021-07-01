@@ -7,7 +7,7 @@ import (
 	"github.com/aleksandrzaykov88/learngo/HeadFirst/keyboard"
 )
 
-//toCelsius() converts fahrenheit temperature into celsius.
+//toCelsius converts fahrenheit temperature into celsius.
 func toCelsius() {
 	fmt.Print("Enter a temperature in Fahrenheit: ")
 	fahrenheit, err := keyboard.GetFloat()

@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-//guess() classic guess game. Player should guess some number from 1 to 100 for 10 tries.
+//guess is a classic guess game. Player should guess some number from 1 to 100 for 10 tries.
 func guess() {
 	seconds := time.Now().Unix()
 	rand.Seed(seconds)
@@ -45,4 +45,8 @@ func guess() {
 	if !success {
 		fmt.Println("Sorry, you didn't guess my number. It was:", target)
 	}
+}
+
+func main() {
+	guess()
 }

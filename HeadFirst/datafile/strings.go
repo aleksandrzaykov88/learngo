@@ -1,11 +1,12 @@
-package main
+//Package datafile is used to read some info from files.
+package datafile
 
 import (
 	"bufio"
 	"os"
 )
 
-//getStrings() reads strings from every file's line.
+//getStrings reads strings from every file's line.
 func getStrings(fileName string) ([]string, error) {
 	var lines []string
 	file, err := os.Open(fileName)

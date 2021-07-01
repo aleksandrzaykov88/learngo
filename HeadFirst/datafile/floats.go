@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-//openFile() opens file with name geting from command line.
+//openFile opens file with name geting from command line.
 func openFile(fileName string) (*os.File, error) {
 	fmt.Println("Opening", fileName)
 	return os.Open(fileName)
@@ -19,7 +19,7 @@ func closeFile(file *os.File) {
 	file.Close()
 }
 
-// GetFloats() reads float64 value from every file string.
+// GetFloats reads float64 value from every file string.
 func GetFloats(fileName string) ([]float64, error) {
 	var numbers []float64
 	file, err := openFile(fileName)
