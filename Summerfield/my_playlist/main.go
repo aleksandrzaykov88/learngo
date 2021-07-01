@@ -21,17 +21,23 @@ func readPlsPlaylist(data string) (songs []Song) {
 	var song Song
 	for _, line := range strings.Split(data, "\n") {
 		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "[playlist]") {
+		if line == "" || strings.HasPrefix(line, "[playlist]") || strings.HasPrefix(line, "Version") || strings.HasPrefix(line, "Number") {
 			continue
 		}
+		separatorIndex := strings.Index(line, "=")
 		if strings.HasPrefix(line, "Title") {
-			song.Title = line
+			song.Title = line[separatorIndex+1:]
 		}
 		if strings.HasPrefix(line, "Length") {
-			song.Seconds = 111
+			latency, err := strconv.ParseInt(line[separatorIndex+1:], 10, 64)
+			if err != nil {
+				log.Fatal(err)
+				break
+			}
+			song.Seconds = int(latency)
 		}
 		if strings.HasPrefix(line, "File") {
-			song.Filename = line
+			song.Filename = line[separatorIndex+1:]
 		}
 		if song.Filename != "" && song.Title != "" && song.Seconds != 0 {
 			songs = append(songs, song)
@@ -44,13 +50,10 @@ func readPlsPlaylist(data string) (songs []Song) {
 //writeM3uPlaylist writes the processed string in m3u-format in console.
 func writeM3uPlaylist(songs []Song) {
 	fmt.Println("#EXTM3U")
-	for i, song := range songs {
-		i++
-		fmt.Printf("File%d=%s\n", i, song.Filename)
-		fmt.Printf("Title%d=%s\n", i, song.Title)
-		fmt.Printf("Length%d=%d\n", i, song.Seconds)
+	for _, song := range songs {
+		fmt.Printf("#EXTINF:%d,%s\n", song.Seconds, song.Title)
+		fmt.Printf("%s\n", song.Filename)
 	}
-	fmt.Printf("NumberOfEntries=%d\nVersion=2\n", len(songs))
 }
 
 //readM3uPlaylist reads information from string received from file in .m3u extension.
