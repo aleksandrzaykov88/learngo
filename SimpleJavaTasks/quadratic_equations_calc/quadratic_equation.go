@@ -1,4 +1,3 @@
-//Program gets on its input three real numbers. It is coefficients of quadratic equation. Program finds those roots and returns their amount
 package main
 
 import (
@@ -6,10 +5,14 @@ import (
 	"math"
 )
 
+//quadraticEquationRootsCalc solves the quadratic equation in real numbers.
 func quadraticEquationRootsCalc(a, b, c, D float64) (float64, float64) {
 	return (-(b) + math.Sqrt(D)) / (2 * a), (-(b) - math.Sqrt(D)) / (2 * a)
 }
 
+//quadraticEquationRoots gets on its input three real numbers.
+//It is coefficients of quadratic equation.
+//Program finds those roots and returns their amount.
 func quadraticEquationRoots(a, b, c float64) {
 	D := math.Pow(b, 2) - 4*a*c
 	if D < 0 {
@@ -21,4 +24,8 @@ func quadraticEquationRoots(a, b, c float64) {
 		x1, x2 := quadraticEquationRootsCalc(a, b, c, D)
 		fmt.Println("There are two real roots:", x1, x2)
 	}
+}
+
+func main() {
+	quadraticEquationRoots(6, 1, -2)
 }

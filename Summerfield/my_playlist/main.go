@@ -16,6 +16,7 @@ type Song struct {
 	Seconds  int
 }
 
+//readPlsPlaylist reads information from string received from file in .pls extension.
 func readPlsPlaylist(data string) (songs []Song) {
 	var song Song
 	for _, line := range strings.Split(data, "\n") {
@@ -40,6 +41,7 @@ func readPlsPlaylist(data string) (songs []Song) {
 	return songs
 }
 
+//writeM3uPlaylist writes the processed string in m3u-format in console.
 func writeM3uPlaylist(songs []Song) {
 	fmt.Println("#EXTM3U")
 	for i, song := range songs {
@@ -51,6 +53,7 @@ func writeM3uPlaylist(songs []Song) {
 	fmt.Printf("NumberOfEntries=%d\nVersion=2\n", len(songs))
 }
 
+//readM3uPlaylist reads information from string received from file in .m3u extension.
 func readM3uPlaylist(data string) (songs []Song) {
 	var song Song
 	for _, line := range strings.Split(data, "\n") {
@@ -71,6 +74,7 @@ func readM3uPlaylist(data string) (songs []Song) {
 	return songs
 }
 
+//writePlsPlaylist writes the processed string in pls-format in console.
 func writePlsPlaylist(songs []Song) {
 	fmt.Println("[playlist]")
 	for i, song := range songs {
@@ -82,6 +86,7 @@ func writePlsPlaylist(songs []Song) {
 	fmt.Printf("NumberOfEntries=%d\nVersion=2\n", len(songs))
 }
 
+//parseExtinfLine parses m3u file to get filename, title and duration.
 func parseExtinfLine(line string) (title string, seconds int) {
 	if i := strings.IndexAny(line, "-0123456789"); i > -1 {
 		const separator = ","
@@ -90,7 +95,7 @@ func parseExtinfLine(line string) (title string, seconds int) {
 			title = line[j+len(separator):]
 			var err error
 			if seconds, err = strconv.Atoi(line[:j]); err != nil {
-				log.Printf("failed to read the duratin for '%s': %v\n", title, err)
+				log.Printf("failed to read the duration for '%s': %v\n", title, err)
 				seconds = -1
 			}
 		}
@@ -98,6 +103,7 @@ func parseExtinfLine(line string) (title string, seconds int) {
 	return title, seconds
 }
 
+//mapPlatformDirSeparator returns separator sign for the curren OS.
 func mapPlatformDirSeparator(char rune) rune {
 	if char == '/' || char == '\\' {
 		return filepath.Separator

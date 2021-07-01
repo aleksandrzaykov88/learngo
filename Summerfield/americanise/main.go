@@ -12,8 +12,9 @@ import (
 	"strings"
 )
 
-var britishAmerican = "C:/british-american.txt"
+var britishAmerican = "C:/Users/admin/Documents/azaykov/goeg/src/americanise/british-american.txt"
 
+//filenamesFromCommandLine returns two filenames obtained from the command line and error.
 func filenamesFromCommandLine() (inFilename, outFilename string, err error) {
 	if len(os.Args) > 1 && (os.Args[1] == "-h" || os.Args[1] == "--help") {
 		err = fmt.Errorf("usage: %s [<]infile.txt [>]outfile.txt", filepath.Base(os.Args[0]))
@@ -31,6 +32,8 @@ func filenamesFromCommandLine() (inFilename, outFilename string, err error) {
 	return inFilename, outFilename, nil
 }
 
+//americanise reads files line by line and writes down each line
+// replacing words characteristic of British English with their American equivalents.
 func americanise(inFile io.Reader, outFile io.Writer) (err error) {
 	reader := bufio.NewReader(inFile)
 	writer := bufio.NewWriter(outFile)
@@ -62,6 +65,9 @@ func americanise(inFile io.Reader, outFile io.Writer) (err error) {
 	return nil
 }
 
+//makeReplacerFunction takes a filename with original and replacement strings.
+//The function returns another function that for the original strings will return the corresponding replacement strings.
+//Also the function returns the error value.
 func makeReplacerFunction(file string) (func(string) string, error) {
 	rawBytes, err := ioutil.ReadFile(file)
 	if err != nil {

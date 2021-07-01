@@ -58,6 +58,7 @@ func main() {
 	}
 }
 
+//formatInput converts user input to a formatted string.
 func formatInput(num float64, numArg string) string {
 	var str string
 	str = strconv.FormatFloat(num, 'f', -1, 64)
@@ -78,6 +79,8 @@ func formatInput(num float64, numArg string) string {
 	}
 }
 
+//realOrCmplx returns string.
+//If in input number image-part = 0 in output string writes float number, else - complex.
 func realOrCmplx(num complex128) string {
 	if imag(num) == 0 {
 		fNum := math.Round(real(num)*1000) / 1000
@@ -86,6 +89,7 @@ func realOrCmplx(num complex128) string {
 	return fmt.Sprintf("%v", num)
 }
 
+//formatResult returns the roots of an equation in a readable form.
 func formatResult(numbers []float64, roots []complex128) string {
 	result := "x = "
 	x1 := realOrCmplx(roots[0])
@@ -101,6 +105,7 @@ func formatResult(numbers []float64, roots []complex128) string {
 	return fmt.Sprintf(`%s%s%s → %s</span>`, a, b, c, result)
 }
 
+//quadraticEquationRootsCalc solves the quadratic equation and returns it roots.
 func quadraticEquationRootsCalc(odds []float64) (complex128, complex128) {
 	a := odds[0]
 	b := odds[1]
@@ -115,6 +120,7 @@ func quadraticEquationRootsCalc(odds []float64) (complex128, complex128) {
 	return complex((-(b)+math.Sqrt(D))/(2*a), 0), complex((-(b)-math.Sqrt(D))/(2*a), 0)
 }
 
+//getRoots returns received roots in complex-slice.
 func getRoots(numbers []float64) (roots []complex128) {
 	x1, x2 := quadraticEquationRootsCalc(numbers)
 	var nums []complex128
@@ -122,6 +128,7 @@ func getRoots(numbers []float64) (roots []complex128) {
 	return nums
 }
 
+//homePage handles the requests to home page of web app.
 func homePage(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	fmt.Fprint(writer, pageTop, form)
@@ -138,6 +145,7 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprint(writer, pageBottom)
 }
 
+//processRequest reads and returns data from html-form.
 func processRequest(request *http.Request) ([]float64, string, bool) {
 	var nums []float64
 	for i := 1; i <= 3; i++ {

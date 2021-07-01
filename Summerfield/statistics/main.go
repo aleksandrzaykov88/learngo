@@ -39,6 +39,7 @@ func main() {
 	}
 }
 
+//homePage handles the requests to home page of web app.
 func homePage(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	fmt.Fprint(writer, pageTop, form)
@@ -55,6 +56,7 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprint(writer, pageBottom)
 }
 
+//processRequest reads and returns data from html-form.
 func processRequest(request *http.Request) ([]float64, string, bool) {
 	var numbers []float64
 	if slice, found := request.Form["numbers"]; found && len(slice) > 0 {
@@ -73,6 +75,7 @@ func processRequest(request *http.Request) ([]float64, string, bool) {
 	return numbers, "", true
 }
 
+//formatStats returns string whitch contain the formatted result.
 func formatStats(stats statistics) string {
 	return fmt.Sprintf(`<table border="1">
 <tr><th colspan="2">Results</th></tr>
@@ -85,6 +88,7 @@ func formatStats(stats statistics) string {
 </table>`, stats.numbers, len(stats.numbers), stats.mean, stats.median, stats.deviation, stats.modalMean)
 }
 
+//getStats takes a slice with numbers and fills in the return value with the calculation results
 func getStats(numbers []float64) (stats statistics) {
 	stats.numbers = numbers
 	sort.Float64s(stats.numbers)
@@ -95,6 +99,7 @@ func getStats(numbers []float64) (stats statistics) {
 	return stats
 }
 
+//sum returns sum of all number in input-slice.
 func sum(numbers []float64) (total float64) {
 	for _, x := range numbers {
 		total += x
@@ -102,6 +107,7 @@ func sum(numbers []float64) (total float64) {
 	return total
 }
 
+//median returns median of a slice numbers.
 func median(numbers []float64) float64 {
 	middle := len(numbers) / 2
 	result := numbers[middle]
@@ -111,6 +117,7 @@ func median(numbers []float64) float64 {
 	return result
 }
 
+//median returns maximum of a slice numbers.
 func maximum(numbers []int) int {
 	max := int(math.Inf(-1))
 	for _, num := range numbers {
@@ -121,6 +128,7 @@ func maximum(numbers []int) int {
 	return max
 }
 
+//modalMean returns the mode of a slice numbers.
 func modalMean(numbers []float64) []float64 {
 	counts := make(map[float64]int)
 	result := make([]float64, 0)
@@ -142,6 +150,7 @@ func modalMean(numbers []float64) []float64 {
 	return nil
 }
 
+//stdDev returns the standard deviation of a slice numbers.
 func stdDev(numbers []float64) float64 {
 	var deviation float64
 	median := sum(numbers) / float64(len(numbers))

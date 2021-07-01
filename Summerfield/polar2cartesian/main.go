@@ -22,6 +22,7 @@ type cartesian struct {
 
 var prompt = "Enter a raddius and an angle (in degrees), e.g., 12.5 90, " + "or %s to quit."
 
+//init determines the contents of the prompt string, considering differences in end-of-file designation on different platforms.
 func init() {
 	if runtime.GOOS == "windows" {
 		prompt = fmt.Sprintf(prompt, "Ctrl+Z, Enter")
@@ -30,6 +31,7 @@ func init() {
 	}
 }
 
+//createSolver creates an answers channel and after that sends responses through it.
 func createSolver(questions chan polar) chan cartesian {
 	answers := make(chan cartesian)
 	go func() {
@@ -44,6 +46,7 @@ func createSolver(questions chan polar) chan cartesian {
 	return answers
 }
 
+//interact prompts the user to enter polar coordinates (radius and angle).
 func interact(questions chan polar, answers chan cartesian) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println(prompt)

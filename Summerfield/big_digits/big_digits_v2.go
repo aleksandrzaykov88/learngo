@@ -27,6 +27,7 @@ var bigDigits = [][]string{
 	{" 9999", "9   9", "9   9", " 9999", "    9", "    9", "    9"},
 }
 
+//bigDigitsPrinter get number from command line and after prints it lik BIG DIGIT.
 func bigDigitsPrinter() {
 	var barFlag, helpFlag bool
 	for _, arg := range os.Args {
@@ -78,4 +79,8 @@ func bigDigitsPrinter() {
 		}
 		fmt.Println()
 	}
+}
+
+func main() {
+	bigDigitsPrinter()
 }

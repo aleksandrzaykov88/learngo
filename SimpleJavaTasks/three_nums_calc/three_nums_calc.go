@@ -1,4 +1,3 @@
-//FloatCalc takes on input three values and return their product, average and sorts them by ascension
 package main
 
 import (
@@ -6,6 +5,7 @@ import (
 	"sort"
 )
 
+//threeNumsCalc takes on input three values and return their product, average and sorts them by ascension.
 func threeNumsCalc(a, b, c int) {
 	af := float64(a)
 	bf := float64(b)
@@ -16,5 +16,9 @@ func threeNumsCalc(a, b, c int) {
 	sort.Float64s(sortedNums)
 	fmt.Println("Product of numbers:", a, "*", b, "*", c, "=", product)
 	fmt.Println("Average of numbers:", a, b, c, "is", sum/3)
-	fmt.Println("Sorting numbers:", a, b, c, "by acension:", sortedNums)
+	fmt.Println("Sorting numbers:", a, b, c, "by ascension:", sortedNums)
+}
+
+func main() {
+	threeNumsCalc(1, 2, 5)
 }

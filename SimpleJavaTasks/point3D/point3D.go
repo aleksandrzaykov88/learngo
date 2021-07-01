@@ -30,10 +30,12 @@ func (p *Point3D) Z() float64 {
 	return p.z
 }
 
+//PrintPoint outputs point coordinates.
 func (p *Point3D) PrintPoint() {
 	fmt.Printf("Point coordinates: X=%.02f Y=%.02f Z=%.02f", p.x, p.y, p.z)
 }
 
+//pointsEquals returns true if coordinates of two input points are equal.
 func pointsEquals(A, B Point3D) bool {
 	if A.x == B.x && A.y == B.y && A.z == B.z {
 		return true

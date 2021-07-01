@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-//hello process input URL and greetings this URL-name.
+//hello handles input URL and greetings this URL-name.
 func hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, %s", r.URL.Path[1:])
 }

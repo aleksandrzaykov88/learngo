@@ -2,26 +2,22 @@ package main
 
 import "fmt"
 
-func gaussElimination() {
-
-}
-
-//linearSystemSolutionsNumberCheck ()checks the number of solutions of a system of linear equations
+//linearSystemSolutionsNumberCheck checks the number of solutions of a system of linear equations
 func linearSystemSolutionsNumberCheck(a1, b1, c1, a2, b2, c2 float64) string {
 	if a1*b2 != a2*b1 {
-		fmt.Println("There is only one solution of this system")
+		fmt.Println("There is only one solution of this system.")
 		return "One"
 	} else if (a1*b2 == a2*b1) && ((a1*c2 != a2*c1) || (b1*c2 != b2*c1)) {
-		fmt.Println("There are no solutions of this system")
+		fmt.Println("There are no solutions of this system.")
 		return "No"
 	} else if (a1*b2 == a2*b1) && (a1*c2 == a2*c1) && (b1*c2 == b2*c1) {
-		fmt.Println("The system has infinitely many solutions")
+		fmt.Println("The system has infinitely many solutions.")
 		return "Many"
 	}
 	return "Err"
 }
 
-//linearSystemEquationCalc() solves a system of two linear equations in real numbers.
+//linearSystemEquationCalc solves a system of two linear equations in real numbers using the Gauss Elimination.
 func linearSystemEquationCalc(matrix [2][2]float64, freeMemb [2]float64) {
 	if amount := linearSystemSolutionsNumberCheck(matrix[0][0], matrix[0][1], freeMemb[0], matrix[1][0], matrix[1][1], freeMemb[1]); amount == "No" {
 		return
@@ -49,4 +45,8 @@ func linearSystemEquationCalc(matrix [2][2]float64, freeMemb [2]float64) {
 		x[i] = (freeMemb[i] - sum_ax) / matrix[i][i]
 	}
 	fmt.Println(x)
+}
+
+func main() {
+	linearSystemEquationCalc([2][2]float64{{2, -3}, {6, -9}}, [2]float64{7, 12})
 }

@@ -1,10 +1,10 @@
-//This function prints Fibonacci row till n-member
 package main
 
 import (
 	"fmt"
 )
 
+//fibonacci prints the Fibonacci row till n-member.
 func fibonacci(n int) {
 	x := 0
 	y := 1
@@ -14,4 +14,8 @@ func fibonacci(n int) {
 		x = y
 		y = z
 	}
+}
+
+func main() {
+	fibonacci(10)
 }

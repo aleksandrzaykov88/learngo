@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
+//os_args prints arguments from command in several options.
 func os_args() {
-
 	argsWithProg := os.Args
 	argsWithoutProg := os.Args[1:]
 
@@ -15,4 +15,8 @@ func os_args() {
 	fmt.Println(argsWithProg)
 	fmt.Println(argsWithoutProg)
 	fmt.Println(arg)
+}
+
+func main() {
+	os_args()
 }

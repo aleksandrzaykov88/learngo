@@ -20,7 +20,7 @@ type Article struct {
 var posts = []Article{}
 var showPost = Article{}
 
-//index process index page of website.
+//index handles index page of website.
 func index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/index.html", "templates/header.html", "templates/footer.html")
 
