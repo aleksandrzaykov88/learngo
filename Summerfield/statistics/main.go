@@ -117,7 +117,7 @@ func median(numbers []float64) float64 {
 	return result
 }
 
-//median returns maximum of a slice numbers.
+//maximum returns maximum of a slice numbers.
 func maximum(numbers []int) int {
 	max := int(math.Inf(-1))
 	for _, num := range numbers {
