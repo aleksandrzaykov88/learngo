@@ -120,7 +120,6 @@ func show_post(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "show", showPost)
 }
 
-//handleFunc handles interactions with web-server.
 func handleFunc() {
 	rtr := mux.NewRouter()
 	rtr.HandleFunc("/", index).Methods("GET")
