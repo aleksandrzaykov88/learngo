@@ -1,4 +1,4 @@
-package main
+package keyboard
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 
 // GetFloat reads a floating-point number from the keyboard.
 // It returns the number read and any error encountered.
-func getFloat() (float64, error) {
+func GetFloat() (float64, error) {
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
