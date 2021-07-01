@@ -25,3 +25,7 @@ func readFile() {
 		log.Fatal(scanner.Err())
 	}
 }
+
+func main() {
+	readFile()
+}

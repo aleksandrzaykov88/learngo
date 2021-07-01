@@ -12,3 +12,8 @@ func squareRoot(number float64) (float64, error) {
 	}
 	return math.Sqrt(number), nil
 }
+
+func main() {
+	num, _ := squareRoot(100)
+	fmt.Println(num)
+}

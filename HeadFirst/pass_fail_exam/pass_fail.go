@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+
+	"github.com/aleksandrzaykov88/learngo/HeadFirst/keyboard"
 )
 
-//passOrFail() tells us about success or unsuccess of student's examinations.
+//passOrFail tells us about success or unsuccess of student's examinations.
 func passOrFail() {
 	fmt.Print("Enter a grade: ")
-	grade, err := getFloat()
+	grade, err := keyboard.GetFloat()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -19,4 +21,8 @@ func passOrFail() {
 		status = "failing"
 	}
 	fmt.Println("A grade of", grade, "is", status)
+}
+
+func main() {
+	passOrFail()
 }

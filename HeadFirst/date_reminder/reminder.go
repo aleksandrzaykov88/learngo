@@ -89,3 +89,7 @@ func remindDate() {
 	fmt.Println(event.Month())
 	fmt.Println(event.Day())
 }
+
+func main() {
+	remindDate()
+}

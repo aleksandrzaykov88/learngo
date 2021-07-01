@@ -1,8 +1,11 @@
 package main
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
-//maximum() returns max number from nums-slice.
+//maximum returns max number from nums-slice.
 func maximum(nums ...float64) float64 {
 	max := math.Inf(-1)
 	for _, num := range nums {
@@ -11,4 +14,8 @@ func maximum(nums ...float64) float64 {
 		}
 	}
 	return max
+}
+
+func main() {
+	fmt.Println(maximum(10, 11, 123, 1312.3))
 }

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
-//paintNeeded() calculates amount of paint for (n * m) wall.
+//paintNeeded calculates value of paint needed to dye (n * m) wall.
 func paintNeeded(width float64, height float64) (float64, error) {
 	if width < 0 {
 		return 0, fmt.Errorf("a width of %0.2f is invalid", width)
@@ -14,4 +15,12 @@ func paintNeeded(width float64, height float64) (float64, error) {
 	}
 	area := width * height
 	return area / 10.0, nil
+}
+
+func main() {
+	amount, err := paintNeeded(12, 2.5)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(amount)
 }
