@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+
+	"github.com/aleksandrzaykov88/learngo/HeadFirst/datafile"
 )
 
-//countStrings() calculates amount of occurrences of specific string in file.
+//countStrings calculates amount of occurrences of specific string in file.
 func countStrings() {
-	lines, err := getStrings("C:/Users/admin/Documents/azaykov/votes.txt")
+	lines, err := datafile.GetStrings("C:/Users/admin/Documents/azaykov/votes.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

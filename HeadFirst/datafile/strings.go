@@ -7,7 +7,7 @@ import (
 )
 
 //getStrings reads strings from every file's line.
-func getStrings(fileName string) ([]string, error) {
+func GetStrings(fileName string) ([]string, error) {
 	var lines []string
 	file, err := os.Open(fileName)
 	if err != nil {
