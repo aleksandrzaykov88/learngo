@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/aleksandrzaykov88/learngo/HeadFirst/datafile"
 )
 
 func main() {
-	numbers, err := GetFloats(os.Args[1])
+	numbers, err := datafile.GetFloats(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
