@@ -26,6 +26,7 @@ type wallet map[string]float64
 
 var db = map[int64]wallet{}
 
+//exchangeRate returns conversion of one currencie to another with side API.
 func exchangeRate(curFrom string, curTo string) (amountTo float64, err error) {
 	resp, err := http.Get(fmt.Sprintf("https://api.binance.com/api/v3/ticker/price?symbol=%sT%s", curFrom, curTo))
 	if err != nil {
@@ -45,6 +46,7 @@ func exchangeRate(curFrom string, curTo string) (amountTo float64, err error) {
 	return
 }
 
+//getPrice returns the cost of supported cryptocurrency in USD.
 func getPrice(symbol string) (price float64, err error) {
 	resp, err := http.Get(fmt.Sprintf("https://api.binance.com/api/v3/ticker/price?symbol=%sUSDT", symbol))
 	if err != nil {

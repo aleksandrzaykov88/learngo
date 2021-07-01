@@ -20,6 +20,7 @@ type Article struct {
 var posts = []Article{}
 var showPost = Article{}
 
+//index process index page of website.
 func index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/index.html", "templates/header.html", "templates/footer.html")
 
@@ -50,6 +51,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "index", posts)
 }
 
+//create builds page with input form.
 func create(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/create.html", "templates/header.html", "templates/footer.html")
 
@@ -60,6 +62,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "create", nil)
 }
 
+//save_article saves text into database.
 func save_article(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	announcement := r.FormValue("announcement")
@@ -85,6 +88,7 @@ func save_article(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//show_post shows article on web page.
 func show_post(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/show.html", "templates/header.html", "templates/footer.html")
 
@@ -116,6 +120,7 @@ func show_post(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "show", showPost)
 }
 
+//handleFunc handles interactions with web-server.
 func handleFunc() {
 	rtr := mux.NewRouter()
 	rtr.HandleFunc("/", index).Methods("GET")

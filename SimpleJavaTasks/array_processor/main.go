@@ -11,10 +11,12 @@ import (
 
 type Arr []int
 
+//printArr prints array.
 func (a *Arr) printArr() {
 	fmt.Println(*a)
 }
 
+//inputArr gets array from user.
 func (a *Arr) inputArr() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Start inputing the array.")
@@ -38,6 +40,7 @@ func (a *Arr) inputArr() {
 	*a = nums
 }
 
+//sumArr returns the sum of all array elements.
 func (a *Arr) sumArr() int {
 	if len(*a) == 0 {
 		return 0
@@ -49,6 +52,7 @@ func (a *Arr) sumArr() int {
 	return sum
 }
 
+//evenAmount returns amount of even numbers among array elements.
 func (a *Arr) evenAmount() int {
 	if len(*a) == 0 {
 		return 0
@@ -62,6 +66,7 @@ func (a *Arr) evenAmount() int {
 	return count
 }
 
+//abSlice returns amount of numbers in array which are between "from" and "to" nums.
 func (a *Arr) abSlice(from, to int) int {
 	count := 0
 	for _, num := range *a {
@@ -72,6 +77,7 @@ func (a *Arr) abSlice(from, to int) int {
 	return count
 }
 
+//positiveCheck returns true if all elements in array are positive.
 func (a *Arr) positiveCheck() bool {
 	for _, num := range *a {
 		if num <= 0 {
@@ -81,6 +87,7 @@ func (a *Arr) positiveCheck() bool {
 	return true
 }
 
+//reverseArr reverses the order of elements in array.
 func (a *Arr) reverseArr() {
 	var newArr, suppArr Arr
 	suppArr = *a
