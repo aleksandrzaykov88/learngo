@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"html"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -21,14 +23,37 @@ const (
 	<body>`
 	pageTitle = `<h1>Soundex</h1>
 		<p>Compute soundex codes for a list of names.</p>`
-	form = `<form  action="/test" method="POST">
+	form = `<form  action="/" method="POST">
 	<p><label for="names">Names (comma or space-separated)</label></p>
 	<p><input type="text" name="names"></p>
 	<p><input type="submit" value="Compute"></p>
 </form>`
 	pageBottom = `</body>
 	</html>`
+	PASS = "PASS"
+	FAIL = "FAIL"
 )
+
+//readFile reads .txt file and print it line by line.
+func readFile(filepath string) []string {
+	var result []string
+	file, err := os.Open(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		result = append(result, scanner.Text())
+	}
+	err = file.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if scanner.Err() != nil {
+		log.Fatal(scanner.Err())
+	}
+	return result
+}
 
 //letterInSlice returns true if letter is in slice.
 func letterInSlice(letter string, slice []string) bool {
@@ -138,24 +163,20 @@ func soundex(word string) string {
 	return newWord[:4]
 }
 
-//viewResult handles requests to /test-page.
-func viewResult(writer http.ResponseWriter, request *http.Request) {
-	splitter := regexp.MustCompile(`( *, *)|(  *)`)
-	names := splitter.Split(request.FormValue("names"), -1)
-	var newNames []string
+//viewTest handles requests to /test-page.
+func viewTest(writer http.ResponseWriter, request *http.Request) {
+	var names, soundexes, expected []string
+	fmt.Fprint(writer, pageTop)
+	lines := readFile("test.txt")
+	for _, line := range lines {
+		words := strings.Fields(line)
+		names = append(names, words[0])
+		expected = append(expected, words[1])
+	}
 	for _, name := range names {
-		matched, err := regexp.MatchString(`\b([a-zA-Z][a-zA-Z]*)\b`, name)
-		if err != nil || name == "" || !matched {
-			continue
-		}
-		newNames = append(newNames, soundex(name))
+		soundexes = append(soundexes, soundex(name))
 	}
-	if len(newNames) == 0 {
-		fmt.Fprint(writer, pageTop, "Incorrect input", pageBottom)
-		return
-	}
-
-	fmt.Fprint(writer, pageTop, formatResults(names, newNames), pageBottom)
+	fmt.Fprint(writer, formatTest(names, soundexes, expected), pageBottom)
 }
 
 //formatResults formats the result and adds it to the HTML-table.
@@ -168,14 +189,49 @@ func formatResults(names, soundexes []string) string {
 	return text + "</table>"
 }
 
+//formatTest formats the test-result and adds it to the HTML-table.
+func formatTest(names, soundexes, expected []string) string {
+	text := `<table border="1"><tr><th>Name</th><th>Soundex</th><th>Expected</th><th>Test</th></tr>`
+	var res string
+	for i := range names {
+		if soundexes[i] == expected[i] {
+			res = PASS
+		} else {
+			res = FAIL
+		}
+		text += "<tr><td>" + html.EscapeString(names[i]) + "</td><td>" +
+			html.EscapeString(soundexes[i]) + "</td><td>" +
+			html.EscapeString(expected[i]) + "</td><td>" +
+			res + "</td></tr>"
+	}
+	return text + "</table>"
+}
+
 //mainForm handles requests to main page.
 func mainForm(writer http.ResponseWriter, request *http.Request) {
-	fmt.Fprint(writer, pageTop, pageTitle, form, pageBottom)
+	fmt.Fprint(writer, pageTop, pageTitle, form)
+
+	splitter := regexp.MustCompile(`( *, *)|(  *)`)
+	names := splitter.Split(request.FormValue("names"), -1)
+	var newNames []string
+	for _, name := range names {
+		matched, err := regexp.MatchString(`\b([a-zA-Z][a-zA-Z]*)\b`, name)
+		if err != nil || name == "" || !matched {
+			continue
+		}
+		newNames = append(newNames, soundex(name))
+	}
+	if len(newNames) == 0 {
+		fmt.Fprint(writer, "", pageBottom)
+		return
+	}
+
+	fmt.Fprint(writer, formatResults(names, newNames), pageBottom)
 }
 
 func main() {
 	http.HandleFunc("/", mainForm)
-	http.HandleFunc("/test", viewResult)
+	http.HandleFunc("/test", viewTest)
 	err := http.ListenAndServe("localhost:8080", nil)
 	log.Fatal(err)
 }
