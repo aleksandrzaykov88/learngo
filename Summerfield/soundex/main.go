@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"regexp"
@@ -39,7 +40,7 @@ func letterInSlice(letter string, slice []string) bool {
 	return false
 }
 
-//letterToNum discribes the third step of soundex algorithm.
+//letterToNum describes the third step of soundex algorithm.
 //Certain letters are assigned special numbers.
 func letterToNum(letter string) string {
 	firstSet := []string{"b", "f", "p", "v"}
@@ -48,6 +49,7 @@ func letterToNum(letter string) string {
 	fourthSet := []string{"l"}
 	fifthSet := []string{"m", "n"}
 	sixthSet := []string{"r"}
+	seventhSet := []string{"a", "e", "i", "o", "u", "y"}
 
 	switch {
 	case letterInSlice(letter, firstSet):
@@ -62,26 +64,83 @@ func letterToNum(letter string) string {
 		return "5"
 	case letterInSlice(letter, sixthSet):
 		return "6"
+	case letterInSlice(letter, seventhSet):
+		return "0"
 	default:
 		return ""
 	}
 }
 
+//removeVovels describes the fifth step of soundex algorithm.
+//All a, e, i, o, u, y -letters removes from word.
+func removeVovels(word string) string {
+	var r rune
+	for _, c := range word {
+		r = c
+		break
+	}
+	newWord := string(r)
+	for i := 1; i <= len(word)-1; i++ {
+		if string(word[i]) == "0" {
+			continue
+		}
+		newWord += string(word[i])
+	}
+	return newWord
+}
+
+//removeDoubles describes the fifth step of soundex algorithm.
+//Any sequence of identical digits is reduced to one such digit.
+func removeDoubles(word string) string {
+	var r rune
+	for _, c := range word {
+		r = c
+		break
+	}
+	newWord := string(r)
+	for i := 1; i <= len(word)-1; i++ {
+		if i == 1 {
+			newWord += letterToNum(string(word[i]))
+		} else if i > 1 {
+			a := letterToNum(string(word[i-1]))
+			b := letterToNum(string(word[i]))
+			if b != a {
+				newWord += b
+			}
+		}
+	}
+	return newWord
+}
+
 //soundex sets the same index for strings that sound similar in English.
 func soundex(word string) string {
-	newWord := strings.ToUpper(string(word[0]))
+	var r rune
+	for _, c := range word {
+		r = c
+		break
+	}
+	newWord := strings.ToUpper(string(r))
 	for i := 1; i <= len(word)-1; i++ {
 		if string(word[i]) == "h" || string(word[i]) == "w" {
 			continue
 		}
-		newWord += letterToNum(string(word[i]))
+		newWord += string(word[i])
 	}
-	return ""
+	newWord = removeDoubles(newWord)
+	newWord = removeVovels(newWord)
+	for {
+		if len(newWord) < 4 {
+			newWord += "0"
+		} else {
+			break
+		}
+	}
+	return newWord[:4]
 }
 
 //viewResult handles requests to /test-page.
 func viewResult(writer http.ResponseWriter, request *http.Request) {
-	splitter := regexp.MustCompile(` *, *`)
+	splitter := regexp.MustCompile(`( *, *)|(  *)`)
 	names := splitter.Split(request.FormValue("names"), -1)
 	var newNames []string
 	for _, name := range names {
@@ -89,13 +148,24 @@ func viewResult(writer http.ResponseWriter, request *http.Request) {
 		if err != nil || name == "" || !matched {
 			continue
 		}
-		newNames = append(newNames, name, soundex(name))
+		newNames = append(newNames, soundex(name))
 	}
 	if len(newNames) == 0 {
 		fmt.Fprint(writer, pageTop, "Incorrect input", pageBottom)
 		return
 	}
-	fmt.Fprint(writer, pageTop, newNames, pageBottom)
+
+	fmt.Fprint(writer, pageTop, formatResults(names, newNames), pageBottom)
+}
+
+//formatResults formats the result and adds it to the HTML-table.
+func formatResults(names, soundexes []string) string {
+	text := `<table border="1"><tr><th>Name</th><th>Soundex</th></tr>`
+	for i := range names {
+		text += "<tr><td>" + html.EscapeString(names[i]) + "</td><td>" +
+			html.EscapeString(soundexes[i]) + "</td></tr>"
+	}
+	return text + "</table>"
 }
 
 //mainForm handles requests to main page.
