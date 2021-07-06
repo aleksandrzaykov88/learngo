@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+//Arr describes the simple array.
 type Arr []int
 
 //printArr prints array.
