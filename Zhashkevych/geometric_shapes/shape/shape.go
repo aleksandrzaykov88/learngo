@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"github.com/aleksandrzaykov88/learngo/HeadFirst/keyboard"
+	circle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/circle"
 )
 
 type GeometricShape interface {
@@ -21,6 +20,6 @@ func CreateShape(g GeometricShape) {
 }
 
 func main() {
-	f, _ := keyboard.GetFloat()
-	fmt.Println(f)
+	var c := circle.Circle{}	
+	CreateShape(c)
 }
