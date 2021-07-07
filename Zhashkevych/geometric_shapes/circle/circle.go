@@ -22,8 +22,8 @@ func (c *Circle) SetSize() {
 }
 
 //SetSizeFromKeyboard sets circle radius from user input.
-func (c *Circle) SetSizeFromKeyboard(string) float64 {
-	fmt.Println("Enter a radius of the circle: ")
+func (c *Circle) SetSizeFromKeyboard(s string) float64 {
+	fmt.Println("Enter a radius of the circle: ", s)
 	number, err := keyboard.GetFloat()
 	if err != nil {
 		return 0
