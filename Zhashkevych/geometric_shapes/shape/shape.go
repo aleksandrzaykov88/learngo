@@ -8,7 +8,7 @@ type GeometricShape interface {
 	GetArea() float64
 	GetPerimeter() float64
 	SetSize()
-	SetSizeFromKeyboard()
+	SetSizeFromKeyboard() float64
 	Show()
 	Check() error
 }
@@ -20,6 +20,6 @@ func CreateShape(g GeometricShape) {
 }
 
 func main() {
-	var c := circle.Circle{}	
-	CreateShape(c)
+	var c = circle.Circle{}
+	CreateShape(&c)
 }
