@@ -63,8 +63,8 @@ func (t *Triangle) GetPerimeter() float64 {
 
 //Show prints result of calculating area and perimeter of triangle.
 func (t *Triangle) Show() {
-	tArea := c.GetArea()
-	tPerimeter := c.GetPerimeter()
+	tArea := t.GetArea()
+	tPerimeter := t.GetPerimeter()
 	fmt.Printf("Rectangle area: %f cm^2", tArea)
 	fmt.Println()
 	fmt.Printf("Circumference of the rectangle: %f cm", tPerimeter)
