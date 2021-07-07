@@ -1,7 +1,7 @@
 package main
 
 import (
-	circle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/circle"
+	circle "github.com/aleksandrzaykov88/learngo/Zhashkevych/circle"
 	rectangle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/rectangle"
 	triangle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/triangle"
 )
