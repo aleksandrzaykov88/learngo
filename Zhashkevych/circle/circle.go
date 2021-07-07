@@ -3,6 +3,7 @@ package circle
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 
 	"github.com/aleksandrzaykov88/learngo/HeadFirst/keyboard"
@@ -32,21 +33,13 @@ func (c *Circle) SetSizeFromKeyboard() float64 {
 
 //Show prints result of calculating area of circle.
 func (c *Circle) Show() {
-	circleArea, err := c.GetArea()
-	if err != nil {
-		fmt.Println(err.Error())
-		returncd
-	}
-	circumference, err := c.GetPerimeter()
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
+	circleArea := c.GetArea()
+	circumference := c.GetPerimeter()
 	fmt.Printf("Circle radius: %f cm", c.R)
 	fmt.Println()
 	fmt.Printf("Circle area: %f cm^2", circleArea)
 	fmt.Println()
-	fmt.Printf("Circumference of the circle: %f cm", GetPerimeter())
+	fmt.Printf("Circumference of the circle: %f cm", circumference)
 }
 
 //Check user input for negative values of side.
@@ -59,7 +52,7 @@ func (c *Circle) Check() error {
 
 //GetArea calculates the area of a circle with a given radius.
 func (c *Circle) GetArea() float64 {
-	err := Check()
+	err := c.Check()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +61,7 @@ func (c *Circle) GetArea() float64 {
 
 //GetPerimeter calculates the circumference
 func (c *Circle) GetPerimeter() float64 {
-	err := Check()
+	err := c.Check()
 	if err != nil {
 		log.Fatal(err)
 	}
