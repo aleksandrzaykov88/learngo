@@ -1,4 +1,4 @@
-package main
+package rectangle
 
 import (
 	"errors"
@@ -14,8 +14,8 @@ type Rectangle struct {
 	B float64
 }
 
-//IsRectangle check user input for negative values of side.
-func (r *Rectangle) IsRectangle() error {
+//Check user input for negative values of side.
+func (r *Rectangle) Check() error {
 	if r.A < 0 || r.B < 0 {
 		return errors.New("Side size can't be less than zero!")
 	}
@@ -23,7 +23,7 @@ func (r *Rectangle) IsRectangle() error {
 }
 
 //SetSidesFromKeyboard sets sizes of rectangle sides from user input.
-func (r *Rectangle) SetSideFromKeyboard(sideName string) float64 {
+func (r *Rectangle) SetSizeFromKeyboard(sideName string) float64 {
 	fmt.Printf("Enter %s side: ", sideName)
 	number, err := keyboard.GetFloat()
 	if err != nil {
@@ -32,11 +32,11 @@ func (r *Rectangle) SetSideFromKeyboard(sideName string) float64 {
 	return number
 }
 
-//SetSides sets sizes of rectangle sides.
-func (r *Rectangle) SetSides() {
-	r.A = r.SetSideFromKeyboard("A")
-	r.B = r.SetSideFromKeyboard("B")
-	err := r.IsRectangle()
+//SetSize sets sizes of rectangle sides.
+func (r *Rectangle) SetSize() {
+	r.A = r.SetSizeFromKeyboard("A")
+	r.B = r.SetSizeFromKeyboard("B")
+	err := r.Check()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -53,9 +53,11 @@ func (r *Rectangle) GetPerimeter() float64 {
 	return (r.A + r.B) * 2
 }
 
-func main() {
-	var ABC Rectangle
-	ABC.SetSides()
-	fmt.Println(ABC.GetPerimeter())
-	fmt.Println(ABC.GetArea())
+//Show prints result of calculating area and perimeter of rectangle.
+func (r *Rectangle) Show() {
+	rArea := c.GetArea()
+	rPerimeter := c.GetPerimeter()
+	fmt.Printf("Rectangle area: %f cm^2", rArea)
+	fmt.Println()
+	fmt.Printf("Circumference of the rectangle: %f cm", rPerimeter)
 }

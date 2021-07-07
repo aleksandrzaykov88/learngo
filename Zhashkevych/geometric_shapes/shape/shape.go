@@ -2,6 +2,8 @@ package main
 
 import (
 	circle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/circle"
+	rectangle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/rectangle"
+	triangle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/triangle"
 )
 
 type GeometricShape interface {
@@ -21,5 +23,9 @@ func CreateShape(g GeometricShape) {
 
 func main() {
 	var c = circle.Circle{}
+	var t = triangle.Triangle{}
+	var r = rectangle.Rectangle{}
 	CreateShape(&c)
+	CreateShape(&t)
+	CreateShape(&r)
 }

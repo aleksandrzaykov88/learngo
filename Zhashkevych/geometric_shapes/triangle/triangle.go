@@ -16,8 +16,8 @@ type Triangle struct {
 	C float64
 }
 
-//IsTriangle uses triangle inequality to check user input and determine whether it is a triangle or not.
-func (t *Triangle) IsTriangle() error {
+//Check uses triangle inequality to check user input and determine whether it is a triangle or not.
+func (t *Triangle) Check() error {
 	if t.A < 0 || t.B < 0 || t.C < 0 {
 		return errors.New("Side size can't be less than zero!")
 	}
@@ -28,7 +28,7 @@ func (t *Triangle) IsTriangle() error {
 }
 
 //SetSidesFromKeyboard sets sizes of triangle sides from user input.
-func (t *Triangle) SetSideFromKeyboard(sideName string) float64 {
+func (t *Triangle) SetSizeFromKeyboard(sideName string) float64 {
 	fmt.Printf("Enter %s side: ", sideName)
 	number, err := keyboard.GetFloat()
 	if err != nil {
@@ -38,11 +38,11 @@ func (t *Triangle) SetSideFromKeyboard(sideName string) float64 {
 }
 
 //SetSides sets sizes of triangle sides.
-func (t *Triangle) SetSides() {
-	t.A = t.SetSideFromKeyboard("A")
-	t.B = t.SetSideFromKeyboard("B")
-	t.C = t.SetSideFromKeyboard("C")
-	err := t.IsTriangle()
+func (t *Triangle) SetSize() {
+	t.A = t.SetSizeFromKeyboard("A")
+	t.B = t.SetSizeFromKeyboard("B")
+	t.C = t.SetSizeFromKeyboard("C")
+	err := t.Check()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -59,4 +59,13 @@ func (t *Triangle) GetArea() float64 {
 //GetPerimeter returns the perimeter of triangle.
 func (t *Triangle) GetPerimeter() float64 {
 	return t.A + t.B + t.C
+}
+
+//Show prints result of calculating area and perimeter of triangle.
+func (t *Triangle) Show() {
+	tArea := c.GetArea()
+	tPerimeter := c.GetPerimeter()
+	fmt.Printf("Rectangle area: %f cm^2", tArea)
+	fmt.Println()
+	fmt.Printf("Circumference of the rectangle: %f cm", tPerimeter)
 }
