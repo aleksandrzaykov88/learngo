@@ -10,7 +10,7 @@ type GeometricShape interface {
 	GetArea() float64
 	GetPerimeter() float64
 	SetSize()
-	SetSizeFromKeyboard() float64
+	SetSizeFromKeyboard(string) float64
 	Show()
 	Check() error
 }

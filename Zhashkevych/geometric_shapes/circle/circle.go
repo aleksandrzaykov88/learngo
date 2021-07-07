@@ -18,11 +18,11 @@ type Circle struct {
 
 //SetSize sets circle radius.
 func (c *Circle) SetSize() {
-	c.R = c.SetSizeFromKeyboard()
+	c.R = c.SetSizeFromKeyboard("")
 }
 
 //SetSizeFromKeyboard sets circle radius from user input.
-func (c *Circle) SetSizeFromKeyboard() float64 {
+func (c *Circle) SetSizeFromKeyboard(string) float64 {
 	fmt.Println("Enter a radius of the circle: ")
 	number, err := keyboard.GetFloat()
 	if err != nil {
