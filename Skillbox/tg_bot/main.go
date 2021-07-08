@@ -70,7 +70,7 @@ func getPrice(symbol string) (price float64, err error) {
 }
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("1818286792:AAGI1MSvXv5A10Pp9QRFXh4-DZc8mqS3YnU")
+	bot, err := tgbotapi.NewBotAPI("BOT-API-KEY")
 	if err != nil {
 		log.Panic(err)
 	}
