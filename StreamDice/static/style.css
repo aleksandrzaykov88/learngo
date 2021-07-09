@@ -68,6 +68,7 @@ body {
     border: none; 
     outline: none;
     background-color: transparent;
+		cursor: pointer;
 }
 .logs {    
     width: 640px;
@@ -78,4 +79,22 @@ body {
     text-align: left;
     padding: 10px;
     color: green;
+}
+
+/*MEDIA*/
+@media screen and (max-width: 750px)  {
+	.results {
+		width: 100%;
+	}
+	.dice_pool {
+		padding: 0 10px;
+		justify-content: space-between;
+	}
+	.dice {
+		font-size: 30px;
+	}
+	.logs {
+		width: 100%;
+		padding: 0;
+	}
 }

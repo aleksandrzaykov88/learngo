@@ -1,3 +1,4 @@
+{{ define "index" }}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/style.css">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/img/favicon.ico">
     <title>Stream Dice</title>
 </head>
 
@@ -24,20 +25,22 @@
             </ul>
         </div>
         <ul class="dice_pool">
-            <li class="dice d4">d4<span class="dice_count">3</span></li>
-            <li class="dice d6">d6<span class="dice_count"></span></li>
-            <li class="dice d8">d8<span class="dice_count"></span></li>
-            <li class="dice d10">d10<span class="dice_count"></span></li>
-            <li class="dice d100">d100<span class="dice_count"></span></li>
-            <li class="dice d12">d12<span class="dice_count"></span></li>
-            <li class="dice d20">d20<span class="dice_count"></span></li>
+            <li class="dice">d4<span id="d4" class="dice_count"></span></li>
+            <li class="dice">d6<span id="d6" class="dice_count"></span></li>
+            <li class="dice">d8<span id="d8" class="dice_count"></span></li>
+            <li class="dice">d10<span id="d10" class="dice_count"></span></li>
+            <li class="dice">d100<span id="d100" class="dice_count"></span></li>
+            <li class="dice">d12<span id="d12" class="dice_count"></span></li>
+            <li class="dice">d20<span id="d20" class="dice_count"></span></li>
         </ul>
         <button class="roll_btn">ROLL!</button>
         <button class="clear_btn">clear</button>
         <div class="logs">
-            >Lorem ipsum dolor, sit amet consectetur adipisicing elit. Amet accusantium quo perferendis magnam sapiente exercitationem possimus nostrum praesentium similique impedit dolores architecto, quaerat quam sunt corrupti tempore reiciendis itaque placeat.
         </div>
-    </div>
+    </div>		
+		<script src="../static/jquery-3.6.0.min.js"></script>
+		<script src="../static/script.js"></script>
 </body>
 
 </html>
+{{ end }}
