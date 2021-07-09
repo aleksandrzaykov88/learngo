@@ -14,7 +14,7 @@ type Employee struct {
 	Salary int    `json:"salary"`
 }
 
-//Storage is a type for RESP API communication.
+//Storage is an interface with methods for RESP API communication.
 type Storage interface {
 	Insert(e *Employee)
 	Get(id int) (Employee, error)
@@ -22,7 +22,7 @@ type Storage interface {
 	Delete(id int)
 }
 
-//MemoryStorage is a memory-control type which reserves employees.
+//MemoryStorage is a type which reserves employees.
 type MemoryStorage struct {
 	counter int
 	data    map[int]Employee
