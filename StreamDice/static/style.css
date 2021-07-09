@@ -68,11 +68,7 @@ body {
     border: none; 
     outline: none;
     background-color: transparent;
-<<<<<<< HEAD
-		cursor: pointer;
-=======
-    cursor: pointer;
->>>>>>> 8b3f49a... Little fix
+	cursor: pointer;
 }
 .logs {    
     width: 640px;
