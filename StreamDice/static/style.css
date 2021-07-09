@@ -1,0 +1,104 @@
+body {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+.container {
+    text-align: center;
+}
+.results {
+    width: 640px;
+    height: 240px;
+    background-color: lavender;
+    margin: 0 auto;
+    position: relative;
+}
+.result {
+    display: block;
+    margin: 30px;
+    font-size: 50px;
+    color: tomato;
+}
+.stats {
+    text-align: left;
+    position: absolute;
+    font-size: 12px;
+    list-style: none;
+    bottom: 0;
+}
+.dice_pool {
+    padding: 0 30%;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+}
+.dice_count {
+    display: none;
+    position: absolute;
+    font-size: 12px;
+    font-weight: 500;
+    bottom: -22px;
+    right: 30%;
+    border: 1px solid tomato;
+    padding: 3px;
+}
+.dice {
+    position: relative;
+    font-size: 40px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.dice:hover {
+    color: tomato;
+}
+.roll_btn {
+    width: 200px;
+    height: 40px;
+    background-color: tomato;
+    margin: 20px 0;
+    color: whitesmoke;
+    cursor: pointer;
+    border-color: orangered;
+    margin-bottom: 10px;
+}
+.clear_btn {
+    color: teal;
+    display: block;
+    margin: 0 auto;
+    border: none; 
+    outline: none;
+    background-color: transparent;
+<<<<<<< HEAD
+		cursor: pointer;
+=======
+    cursor: pointer;
+>>>>>>> 8b3f49a... Little fix
+}
+.logs {    
+    width: 640px;
+    height: 240px;
+    background-color: wheat;
+    margin: 0 auto;
+    margin-top: 50px;
+    text-align: left;
+    padding: 10px;
+    color: green;
+}
+
+/*MEDIA*/
+@media screen and (max-width: 750px)  {
+	.results {
+		width: 100%;
+	}
+	.dice_pool {
+		padding: 0 10px;
+		justify-content: space-between;
+	}
+	.dice {
+		font-size: 30px;
+	}
+	.logs {
+		width: 100%;
+		padding: 0;
+	}
+}
