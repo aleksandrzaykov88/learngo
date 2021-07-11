@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -72,8 +73,13 @@ func StreamDice(w http.ResponseWriter, r *http.Request) {
 	if data != "" {
 		rollMap := diceHandler(data)
 		rollResults = diceRoller(rollMap)
-		fmt.Println(rollResults)
-		w.Write([]byte(rollResults))
+		b, err := json.MarshalIndent(rollResults, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s\n", b)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(b)
 	}
 
 	t, err := template.ParseFiles("./templates/index.html")

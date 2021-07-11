@@ -26,9 +26,9 @@ $(".roll_btn").click(function () {
 		url: '/',
 		method: 'POST',
 		data: { sendedData: str },
-		success: function(data) {
+		success: function(results) {
 			console.log("+");
-			console.log(data);
+			console.log(results);
 		 },
 		 error: function(e){
 			console.log("-");
