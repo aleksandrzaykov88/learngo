@@ -16,7 +16,7 @@ func NewDice(edge int) *Dice {
 }
 
 func (d *Dice) Roll() int {
-	return (rand.Intn(d.Edge-1) + 1)
+	return (1 + rand.Intn(d.Edge))
 }
 
 func (d *Dice) RollDicePool(numThrows int) {

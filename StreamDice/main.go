@@ -32,17 +32,18 @@ func createJSON() {
 
 }
 
-func diceRoller(rolls map[int]int) string {
+func diceRoller(rolls map[int]int) map[string]int {
 	rand.Seed(time.Now().UnixNano())
 	var sum int
-	var result string = ""
+	var result = make(map[string]int)
 	for k, v := range rolls {
 		sum = 0
 		var dice = NewDice(k)
 		for i := 1; i <= v; i++ {
 			sum += dice.Roll()
 		}
-		result += "d" + fmt.Sprint(k) + ":" + fmt.Sprint(sum) + ";"
+		newKey := "d" + fmt.Sprint(k)
+		result[newKey] = sum
 	}
 	return result
 }
@@ -67,9 +68,9 @@ func diceHandler(rolls string) map[int]int {
 	return rollResults
 }
 
-func StreamDice(w http.ResponseWriter, r *http.Request) {
+func AjaxHandler(w http.ResponseWriter, r *http.Request) {
 	data := r.FormValue("sendedData")
-	var rollResults string
+	var rollResults = make(map[string]int)
 	if data != "" {
 		rollMap := diceHandler(data)
 		rollResults = diceRoller(rollMap)
@@ -81,7 +82,9 @@ func StreamDice(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(b)
 	}
+}
 
+func StreamDice(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -95,6 +98,7 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", StreamDice)
+	http.HandleFunc("/ajax", AjaxHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	http.HandleFunc("/favicon.ico", faviconHandler)
 	http.ListenAndServe("localhost:8001", nil)
