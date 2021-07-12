@@ -12,6 +12,13 @@ import (
 	"time"
 )
 
+type JSONResults struct {
+	Throwed string `json:"throwed"`
+	Sum     int    `json:"sum"`
+	D100    string `json:"d100"`
+	D20     string `json:"d20"`
+}
+
 func sum() {
 	//dont sum d100 and d20
 }
@@ -74,11 +81,16 @@ func AjaxHandler(w http.ResponseWriter, r *http.Request) {
 	if data != "" {
 		rollMap := diceHandler(data)
 		rollResults = diceRoller(rollMap)
-		b, err := json.MarshalIndent(rollResults, "", "  ")
+		fmt.Println(rollResults)
+
+		test := &JSONResults{Throwed: "test", Sum: 1, D100: "dfsf", D20: "tt"}
+
+		b, err := json.Marshal(test)
+
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("%s\n", b)
+		fmt.Printf("%s\n", string(b))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(b)
 	}

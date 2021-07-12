@@ -28,9 +28,8 @@ $(".roll_btn").click(function () {
 		data: { sendedData: str },
 		dataType: 'json',
 	    success: function (response) {
-			$.each(response, function(key, value){
-				$(".result").text(value);
-			});
+			console.log(response)
+			//$(".result").text(obj["d100"]);
 		},
 		error: function (jqXHR, exception) {
 			var msg = '';
