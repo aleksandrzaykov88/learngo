@@ -10,6 +10,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type Employee struct {
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Sex    string `json:"sex"`
+	Age    int    `json:"age"`
+	Salary int    `json:"salary"`
+}
+
 //connectMongoClient connects to MongoDB and returns client-entity;
 func connectMongoClient() *mongo.Client {
 	context.WithTimeout(context.Background(), 20*time.Second)
@@ -32,29 +40,29 @@ func connectMongoClient() *mongo.Client {
 
 func main() {
 	client := connectMongoClient()
-
 	collection := client.Database("storage").Collection("employees")
-	collection.InsertOne(context.Background(), bson.M{"name": "John2"})
+
+	//ADD
+	newEmployee := Employee{12, "Michael", "Male", 22, 36000}
+	b, err := bson.Marshal(newEmployee)
+	if err != nil {
+		log.Fatal(err)
+	}
+	collection.InsertOne(context.Background(), b)
 
 	/*
+		//GET
 		cur, err := collection.Find(context.Background(), bson.D{})
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer cur.Close(context.Background())
 		for cur.Next(context.Background()) {
-			result := struct {
-				Foo string
-				Bar int32
-			}{}
-			err := cur.Decode(&result)
-			if err != nil {
-				log.Fatal(err)
-			}
 			raw := cur.Current
 			fmt.Println(raw)
 		}
 		if err := cur.Err(); err != nil {
 			log.Fatal(err)
-		}*/
+		}
+	*/
 }

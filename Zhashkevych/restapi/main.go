@@ -5,8 +5,9 @@ import (
 )
 
 func main() {
-	memoryStorage := NewMemoryStorage()
-	handler := NewHandler(memoryStorage)
+	//memoryStorage := NewMemoryStorage()
+	mongoStorage := NewMongoStorage()
+	handler := NewHandler(mongoStorage)
 
 	router := gin.Default()
 
