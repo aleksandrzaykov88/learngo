@@ -13,26 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//connectMongoClient connects to MongoDB and returns client-entity;
-func connectMongoClient() *mongo.Client {
-	context.WithTimeout(context.Background(), 20*time.Second)
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = client.Connect(context.TODO())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ctx, _ := context.WithTimeout(context.Background(), 20*time.Second)
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return client
-}
-
 //Employee describes entity which characterizes the some company's employee.
 type Employee struct {
 	ID     int    `json:"id"`
@@ -46,6 +26,7 @@ type Employee struct {
 type Storage interface {
 	Insert(e *Employee)
 	Get(id int) (Employee, error)
+	GetAll() []Employee
 	Update(id int, e Employee)
 	Delete(id int)
 }
@@ -62,13 +43,25 @@ func NewMongoStorage() *MongoStorage {
 	}
 }
 
+//MemoryStorage is a type which reserves employees.
+type MemoryStorage struct {
+	counter int
+	data    map[int]Employee
+	sync.Mutex
+}
+
+//NewMemoryStorage constructs the MemoryStrorage object.
+func NewMemoryStorage() *MemoryStorage {
+	return &MemoryStorage{
+		data:    make(map[int]Employee),
+		counter: 1,
+	}
+}
+
 //Insert allows to add a new employee to the DB.
 func (s *MongoStorage) Insert(e *Employee) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client := connectMongoClient()
-	defer client.Disconnect(ctx)
-	collection := client.Database("storage").Collection("employees")
+	collection := connectDB()
+	ctx, _ := getCTX(10)
 
 	var temp bson.M
 	if checkID := collection.FindOne(ctx, bson.M{"id": e.ID}).Decode(&temp); checkID == nil {
@@ -84,11 +77,8 @@ func (s *MongoStorage) Insert(e *Employee) {
 
 //Get employee object from DB.
 func (s *MongoStorage) Get(id int) (Employee, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client := connectMongoClient()
-	defer client.Disconnect(ctx)
-	collection := client.Database("storage").Collection("employees")
+	collection := connectDB()
+	ctx, _ := getCTX(10)
 
 	var employeeEntry bson.M
 	if checkID := collection.FindOne(ctx, bson.M{"id": id}).Decode(&employeeEntry); checkID != nil {
@@ -101,13 +91,28 @@ func (s *MongoStorage) Get(id int) (Employee, error) {
 	return n, nil
 }
 
+//Get all employees from DB.
+func (s *MongoStorage) GetAll() []Employee {
+	collection := connectDB()
+	ctx, _ := getCTX(10)
+	cursor, err := collection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var n []Employee
+	err = cursor.All(ctx, &n)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return n
+}
+
 //Update allows to change information about employees in DB.
 func (s *MongoStorage) Update(id int, e Employee) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client := connectMongoClient()
-	defer client.Disconnect(ctx)
-	collection := client.Database("storage").Collection("employees")
+	collection := connectDB()
+	ctx, _ := getCTX(10)
 
 	var employeeEntry bson.M
 	if checkID := collection.FindOne(ctx, bson.M{"id": id}).Decode(&employeeEntry); checkID != nil {
@@ -129,21 +134,17 @@ func (s *MongoStorage) Update(id int, e Employee) {
 
 //Delete employee from DB.
 func (s *MongoStorage) Delete(id int) {
-	delete(s.data, id)
-}
+	collection := connectDB()
+	ctx, _ := getCTX(10)
 
-//MemoryStorage is a type which reserves employees.
-type MemoryStorage struct {
-	counter int
-	data    map[int]Employee
-	sync.Mutex
-}
+	var employeeEntry bson.M
+	if checkID := collection.FindOne(ctx, bson.M{"id": id}).Decode(&employeeEntry); checkID != nil {
+		log.Fatal(errors.New("There is no such an element"))
+	}
 
-//NewMemoryStorage constructs the MemoryStrorage object.
-func NewMemoryStorage() *MemoryStorage {
-	return &MemoryStorage{
-		data:    make(map[int]Employee),
-		counter: 1,
+	_, err := collection.DeleteOne(ctx, bson.M{"id": id})
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
@@ -167,6 +168,17 @@ func (s *MemoryStorage) Get(id int) (Employee, error) {
 	return employee, nil
 }
 
+//Get all employees objects from store.
+func (s *MemoryStorage) GetAll() []Employee {
+	s.Lock()
+	defer s.Unlock()
+	employees := make([]Employee, 0)
+	for _, v := range s.data {
+		employees = append(employees, v)
+	}
+	return employees
+}
+
 //Update allows to change information about employees.
 func (s *MemoryStorage) Update(id int, e Employee) {
 	s.Lock()
@@ -179,4 +191,36 @@ func (s *MemoryStorage) Delete(id int) {
 	s.Lock()
 	delete(s.data, id)
 	s.Unlock()
+}
+
+//connectMongoClient connects to MongoDB and returns client-entity;
+func connectMongoClient() *mongo.Client {
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.Connect(context.TODO())
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx, _ := getCTX(20)
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return client
+}
+
+//connectDB connects and returns employees DB.
+func connectDB() *mongo.Collection {
+	client := connectMongoClient()
+	collection := client.Database("storage").Collection("employees")
+	return collection
+}
+
+//getCTX returns ctx-value.
+func getCTX(seconds int) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), time.Duration(seconds)*time.Second)
 }

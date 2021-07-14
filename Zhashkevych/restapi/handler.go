@@ -93,6 +93,13 @@ func (h *Handler) GetEmployee(c *gin.Context) {
 	c.JSON(http.StatusOK, employee)
 }
 
+//GetEmployee also describes rest api GET method but this one return slice of all employees.
+func (h *Handler) GetEmployees(c *gin.Context) {
+	employees := h.storage.GetAll()
+
+	c.JSON(http.StatusOK, employees)
+}
+
 //GetEmployee describes rest api DELETE method.
 func (h *Handler) DeleteEmployee(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
