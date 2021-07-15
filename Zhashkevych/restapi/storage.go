@@ -22,7 +22,7 @@ type Employee struct {
 	Salary int    `json:"salary"`
 }
 
-//Storage is an interface with methods for RESP API communication.
+//Storage is an interface with methods for RESP API.
 type Storage interface {
 	Insert(e *Employee)
 	Get(id int) (Employee, error)
