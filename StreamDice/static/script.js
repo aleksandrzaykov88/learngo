@@ -29,7 +29,7 @@ $(".roll_btn").click(function () {
 		dataType: 'json',
 	    success: function (response) {
 			console.log(response)
-			//$(".result").text(obj["d100"]);
+			$(".result").text(response.d100);
 		},
 		error: function (jqXHR, exception) {
 			var msg = '';

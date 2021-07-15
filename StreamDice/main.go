@@ -35,8 +35,12 @@ func average() {
 
 }
 
-func createJSON() {
-
+func createJSON(rolls string) *JSONResults {
+	jsonResult := &JSONResults{}
+	jsonResult.Throwed =
+	jsonResult.Sum = 
+	jsonResult.D100 = 
+	jsonResult.D20 = 
 }
 
 func diceRoller(rolls map[int]int) map[string]int {
@@ -83,7 +87,7 @@ func AjaxHandler(w http.ResponseWriter, r *http.Request) {
 		rollResults = diceRoller(rollMap)
 		fmt.Println(rollResults)
 
-		test := &JSONResults{Throwed: "test", Sum: 1, D100: "dfsf", D20: "tt"}
+		jsonResult := createJSON(data)
 
 		b, err := json.Marshal(test)
 
