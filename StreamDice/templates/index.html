@@ -15,13 +15,11 @@
     <div class="container">
         <h1>Roll the dice!</h1>
         <div class="results">
-            <span class="throwman">Sasha throw results:</span>
+            <span class="throwman">{{.}}</span><span> threw:</span>
             <span class="result"></span>
             <ul class="stats">
-                <li class="stat">Sum:</li>
-                <li class="stat">Min:</li>
-                <li class="stat">Max:</li>
-                <li class="stat">Average:</li>
+                <li class="stat">Thrown: <span class="thrown"></span></li>
+                <li class="stat sum">Sum: <span class="sum"></span></li>
             </ul>
         </div>
         <ul class="dice_pool">

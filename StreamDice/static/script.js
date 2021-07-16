@@ -17,19 +17,24 @@ $(".roll_btn").click(function () {
 	$(".logs").html("ROLL!" + "<br>");
 	$('.dice_count').each(function (i, obj) {
 		if ($(obj).text() != "") {
-			$(".logs").html($(".logs").html() + '>' + $(obj).attr("id") + ': ' + $(obj).text() + "<br>");
-			str += $(obj).attr("id")+ ':' + $(obj).text() + ';';
-		}		
+			str += $(obj).attr("id") + ':' + $(obj).text() + ';';
+		}
 	});
-
+	str += "name" + ':' + $(".throwman").text() + ';';
 	$.ajax({
 		url: '/ajax',
 		method: 'POST',
 		data: { sendedData: str },
 		dataType: 'json',
-	    success: function (response) {
-			console.log(response)
-			$(".result").text(response.d100);
+		success: function (response) {
+			if (response.d100 || response.d20) {
+				$(".result").text(response.d100);
+			} else {
+				$(".result").text(response.sum);
+			}
+			$(".stat .thrown").text(response.throwed);
+			$(".stat .sum").text(response.sum);
+			$(".logs").html(response.log);
 		},
 		error: function (jqXHR, exception) {
 			var msg = '';
@@ -56,5 +61,7 @@ $(".roll_btn").click(function () {
 $(".clear_btn").click(function () {
 	$(".dice_count").text("");
 	$(".dice_count").hide();
-	$(".logs").html("");
+	$(".stat .thrown").text("");
+	$(".stat .sum").text("");
+	$(".result").text("");
 });
