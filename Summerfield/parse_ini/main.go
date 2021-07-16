@@ -1,14 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 //ParseIni parses .ini-file.
-func ParseIni() map[string]map[string]string {
-	return map[string]map[string]string{"Map": {"Key": "Value"}}
+func ParseIni(s []string) map[string]map[string]string {
+	result := make(map[string]map[string]string)
+	key := ""
+	for _, line := range s {
+		if strings.HasPrefix(line, ";") || line == "" {
+			continue
+		}
+		if strings.HasPrefix(line, "[") {
+			key = line[1 : len(line)-1]
+			result[key] = make(map[string]string)
+			continue
+		}
+		sLine := strings.Split(line, "=")
+		result[key][sLine[0]] = sLine[1]
+	}
+	return result
 }
 
 func main() {
-	fmt.Println(ParseIni())
 	iniData := []string{
 		"; Cut down copy of Mozilla application.ini file",
 		"",
@@ -24,4 +40,5 @@ func main() {
 		"EnableProfileMigrator=0",
 		"EnableExtensionManager=1",
 	}
+	fmt.Println(ParseIni(iniData))
 }
