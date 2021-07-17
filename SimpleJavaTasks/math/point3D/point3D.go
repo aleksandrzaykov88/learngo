@@ -1,11 +1,15 @@
+//point3D package describes point in 3D.
+//It also provides some methods to work with it.
 package point3D
 
 import "fmt"
 
+//Point3D is a point in 3D.
 type Point3D struct {
 	x, y, z float64
 }
 
+//NewPoint3D construts the point.
 func NewPoint3D() *Point3D {
 	return &Point3D{}
 }
