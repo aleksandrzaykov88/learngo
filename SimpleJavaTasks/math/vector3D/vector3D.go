@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/aleksandrzaykov88/learngo/SimpleJavaTasks/point3D"
+	"github.com/aleksandrzaykov88/learngo/SimpleJavaTasks/math/point3D"
 )
 
 type Vector3D struct {
