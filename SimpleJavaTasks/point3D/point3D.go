@@ -1,9 +1,13 @@
-package main
+package point3D
 
 import "fmt"
 
 type Point3D struct {
 	x, y, z float64
+}
+
+func NewPoint3D() *Point3D {
+	return &Point3D{}
 }
 
 func (p *Point3D) SetX(x float64) {
@@ -41,16 +45,4 @@ func pointsEquals(A, B Point3D) bool {
 		return true
 	}
 	return false
-}
-
-func main() {
-	var A, B Point3D
-	A.SetX(1)
-	A.SetY(1)
-	A.SetZ(1)
-	B.SetX(1)
-	B.SetY(1)
-	B.SetZ(1)
-	fmt.Println(pointsEquals(A, B))
-	fmt.Println(A.X())
 }
