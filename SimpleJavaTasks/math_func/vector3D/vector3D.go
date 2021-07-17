@@ -1,11 +1,11 @@
 //vector3D package describes vector in 3D.
 //It also provides some methods to work with it.
-package vector3Dn
+package vector3D
 
 import (
 	"math"
 
-	"github.com/aleksandrzaykov88/learngo/SimpleJavaTasks/math/point3D"
+	"github.com/aleksandrzaykov88/learngo/SimpleJavaTasks/math_func/point3D"
 )
 
 //Vector3D describes a vector in 3D space.
