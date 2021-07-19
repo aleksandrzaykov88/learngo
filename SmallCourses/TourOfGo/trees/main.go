@@ -6,6 +6,14 @@ import (
 	"golang.org/x/tour/tree"
 )
 
+//CountNode returns amount of tree leafs.
+func CountNode(t *tree.Tree) int {
+	if t == nil {
+		return 0
+	}
+	return 1 + CountNode(t.Left) + CountNode(t.Right)
+}
+
 // Walk walks the tree t sending all values
 // from the tree to the channel ch.
 func Walk(t *tree.Tree, ch chan int) {
@@ -24,17 +32,29 @@ func Same(t1, t2 *tree.Tree) bool {
 		return true
 	}
 	if t1 != nil && t2 != nil {
-		fmt.Println(t1)
-		return t1.Value == t2.Value && Same(t1.Left, t2.Left) && Same(t1.Right, t2.Right)
+		ch1 := make(chan int)
+		ch2 := make(chan int)
+		go Walk(t1, ch1)
+		go Walk(t2, ch2)
+		if CountNode(t1) == CountNode(t2) {
+			for i := 0; i < CountNode(t1); i++ {
+				if <-ch1 != <-ch2 {
+					return false
+				}
+				return true
+			}
+		}
 	}
 	return false
 }
 
 func main() {
 	ch := make(chan int)
-	go Walk(tree.New(2), ch)
-	for i := 0; i < 10; i++ {
+	t := tree.New(2)
+	go Walk(t, ch)
+	for i := 0; i < CountNode(t); i++ {
 		fmt.Println(<-ch)
 	}
-	fmt.Println(Same(tree.New(1), tree.New(1)))
+	t1, t2 := tree.New(2), tree.New(2)
+	fmt.Println(Same(t1, t2))
 }
