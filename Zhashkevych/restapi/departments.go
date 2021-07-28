@@ -7,9 +7,9 @@ import (
 
 //Department describes entity which characterizes the some company's department.
 type Department struct {
-	ID        int        `json:"id"`
-	Name      string     `json:"name"`
-	Employees []Employee `json:"employees"`
+	ID        int              `json:"id"`
+	Name      string           `json:"name"`
+	Employees map[int]Employee `json:"employees"`
 }
 
 //Departments is an interface with methods for RESP API.
@@ -26,14 +26,14 @@ type Departments interface {
 //MemoryDepartments is a type which implements the interface Departments.
 type MemoryDepartments struct {
 	counter int
-	data    map[int]Department
+	data    map[int]*Department
 	sync.Mutex
 }
 
 //NewMemoryDepartments constructs the MemoryDepartments object.
 func NewMemoryDepartments() *MemoryDepartments {
 	return &MemoryDepartments{
-		data:    make(map[int]Department),
+		data:    make(map[int]*Department),
 		counter: 1,
 	}
 }
@@ -42,7 +42,7 @@ func NewMemoryDepartments() *MemoryDepartments {
 func (m *MemoryDepartments) Insert(d *Department) {
 	m.Lock()
 	d.ID = m.counter
-	m.data[d.ID] = *d
+	m.data[d.ID] = d
 	m.counter++
 	m.Unlock()
 }
@@ -53,9 +53,10 @@ func (m *MemoryDepartments) Get(id int) (Department, error) {
 	defer m.Unlock()
 	department, ok := m.data[id]
 	if !ok {
+		department := Department{}
 		return department, errors.New("such department not found")
 	}
-	return department, nil
+	return *department, nil
 }
 
 //Get all department-objects from store.
@@ -64,7 +65,7 @@ func (m *MemoryDepartments) GetAll() []Department {
 	defer m.Unlock()
 	departments := make([]Department, 0)
 	for _, v := range m.data {
-		departments = append(departments, v)
+		departments = append(departments, *v)
 	}
 	return departments
 }
@@ -72,7 +73,7 @@ func (m *MemoryDepartments) GetAll() []Department {
 //Update allows to change information about department.
 func (m *MemoryDepartments) Update(id int, d Department) {
 	m.Lock()
-	m.data[id] = d
+	m.data[id] = &d
 	m.Unlock()
 }
 
@@ -86,13 +87,14 @@ func (m *MemoryDepartments) Delete(id int) {
 //InsertEmployee to selected department.
 func (m *MemoryDepartments) InsertEmployee(id int, e *Employee) {
 	m.Lock()
-	m.data[id].Employees = append(m.data[id].Employees, e)
+	ID := len(m.data[id].Employees) + 1
+	m.data[id].Employees[ID] = *e
 	m.Unlock()
 }
 
 //RemoveEmployee from selected department.
-func (m *MemoryDepartments) RemoveEmployee(id int) {
+func (m *MemoryDepartments) RemoveEmployee(depid int, eid int) {
 	m.Lock()
-	delete(m.data, id)
+	delete(m.data[depid].Employees, eid)
 	m.Unlock()
 }

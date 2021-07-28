@@ -5,10 +5,10 @@ import (
 )
 
 func main() {
-	//memoryStorage := NewMemoryStorage()
-	//handler := NewHandler(memoryStorage)
-	mongoStorage := NewMongoStorage()
-	handler := NewHandler(mongoStorage)
+	memoryStorage := NewMemoryStorage()
+	handler := NewHandler(memoryStorage)
+	//mongoStorage := NewMongoStorage()
+	//handler := NewHandler(mongoStorage)
 
 	router := gin.Default()
 
@@ -19,6 +19,19 @@ func main() {
 	router.DELETE("/employee/:id", handler.DeleteEmployee)
 	//Employee addition API
 	router.GET("/employee/", handler.GetEmployees)
+
+	memDepts := NewMemoryDepartments()
+	dHandler := NewDepHandler(memDepts)
+
+	//Department main API
+	router.POST("/department", dHandler.CreateDepartment)
+	router.GET("/department/:id", dHandler.GetDepartment)
+	router.PUT("/department/:id", dHandler.UpdateDepartment)
+	router.DELETE("/department/:id", dHandler.DeleteDepartment)
+	//Department addition API
+	router.GET("/department/", dHandler.GetDepartments)
+	router.POST("/department/:id", dHandler.InsertEmployee)
+	router.DELETE("/department/remove/:did/:eid", dHandler.RemoveEmployee)
 
 	router.Run()
 }
