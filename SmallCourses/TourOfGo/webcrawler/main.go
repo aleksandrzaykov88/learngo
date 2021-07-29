@@ -6,8 +6,7 @@ import (
 )
 
 type Visited struct {
-	mu sync.Mutex
-	v  map[string]int
+	v map[string]int
 }
 
 var visited Visited = Visited{v: make(map[string]int)}
@@ -20,7 +19,8 @@ type Fetcher interface {
 
 // Crawl uses fetcher to recursively crawl
 // pages starting with url, to a maximum of depth.
-func Crawl(url string, depth int, fetcher Fetcher) {
+func Crawl(url string, depth int, fetcher Fetcher, wg *sync.WaitGroup) {
+	wg.Add(1)
 	if depth <= 0 {
 		return
 	}
@@ -35,14 +35,21 @@ func Crawl(url string, depth int, fetcher Fetcher) {
 	}
 	fmt.Printf("found: %s %q\n", url, body)
 	for _, u := range urls {
-		go Crawl(u, depth-1, fetcher)
+		go Crawl(u, depth-1, fetcher, wg)
 	}
 	return
 }
 
 func main() {
-	Crawl("https://golang.org/", 4, fetcher)
-	//time.Sleep(5 * time.Second)
+	var wg sync.WaitGroup
+	mu := new(sync.Mutex)
+	go func(wg *sync.WaitGroup, mu *sync.Mutex) {
+		defer wg.Done()
+		mu.Lock()
+		Crawl("https://golang.org/", 4, fetcher, wg)
+		mu.Unlock()
+	}(&wg, mu)
+	wg.Wait()
 }
 
 // fakeFetcher is Fetcher that returns canned results.
