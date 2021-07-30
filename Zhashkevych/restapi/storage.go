@@ -60,7 +60,7 @@ func NewMemoryStorage() *MemoryStorage {
 
 //Insert allows to add a new employee to the DB.
 func (s *MongoStorage) Insert(e *Employee) {
-	collection := connectDB()
+	collection := connectDB("storage", "employees")
 	ctx, _ := getCTX(10)
 
 	var temp bson.M
@@ -77,7 +77,7 @@ func (s *MongoStorage) Insert(e *Employee) {
 
 //Get employee object from DB.
 func (s *MongoStorage) Get(id int) (Employee, error) {
-	collection := connectDB()
+	collection := connectDB("storage", "employees")
 	ctx, _ := getCTX(10)
 
 	var employeeEntry bson.M
@@ -93,7 +93,7 @@ func (s *MongoStorage) Get(id int) (Employee, error) {
 
 //Get all employees from DB.
 func (s *MongoStorage) GetAll() []Employee {
-	collection := connectDB()
+	collection := connectDB("storage", "employees")
 	ctx, _ := getCTX(10)
 	cursor, err := collection.Find(context.TODO(), bson.D{})
 	if err != nil {
@@ -111,7 +111,7 @@ func (s *MongoStorage) GetAll() []Employee {
 
 //Update allows to change information about employees in DB.
 func (s *MongoStorage) Update(id int, e Employee) {
-	collection := connectDB()
+	collection := connectDB("storage", "employees")
 	ctx, _ := getCTX(10)
 
 	var employeeEntry bson.M
@@ -134,7 +134,7 @@ func (s *MongoStorage) Update(id int, e Employee) {
 
 //Delete employee from DB.
 func (s *MongoStorage) Delete(id int) {
-	collection := connectDB()
+	collection := connectDB("storage", "employees")
 	ctx, _ := getCTX(10)
 
 	var employeeEntry bson.M
@@ -214,9 +214,9 @@ func connectMongoClient() *mongo.Client {
 }
 
 //connectDB connects and returns employees DB.
-func connectDB() *mongo.Collection {
+func connectDB(dbName string, collectName string) *mongo.Collection {
 	client := connectMongoClient()
-	collection := client.Database("storage").Collection("employees")
+	collection := client.Database(dbName).Collection(collectName)
 	return collection
 }
 

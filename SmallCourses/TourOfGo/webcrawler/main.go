@@ -42,13 +42,10 @@ func Crawl(url string, depth int, fetcher Fetcher, wg *sync.WaitGroup) {
 
 func main() {
 	var wg sync.WaitGroup
-	mu := new(sync.Mutex)
-	go func(wg *sync.WaitGroup, mu *sync.Mutex) {
+	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		mu.Lock()
 		Crawl("https://golang.org/", 4, fetcher, wg)
-		mu.Unlock()
-	}(&wg, mu)
+	}(&wg)
 	wg.Wait()
 }
 
