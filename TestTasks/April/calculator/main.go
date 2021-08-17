@@ -60,7 +60,31 @@ func IdentifyToken(token string) oper {
 	}
 }
 
+//Evaluate applies the operator from strStack to the last two numbers of the numStack.
+func Evaluate(numStack *Stack, strStack *StrStack) {
+	op, _ := strStack.Pop()
+	switch op {
+	case "+":
+		num2, _ := numStack.Pop()
+		num1, _ := numStack.Pop()
+		numStack.Push(num1 + num2)
+	case "-":
+		num2, _ := numStack.Pop()
+		num1, _ := numStack.Pop()
+		numStack.Push(num1 - num2)
+	case "*":
+		num2, _ := numStack.Pop()
+		num1, _ := numStack.Pop()
+		numStack.Push(num1 * num2)
+	case "/":
+		num2, _ := numStack.Pop()
+		num1, _ := numStack.Pop()
+		numStack.Push(num1 / num2)
+	}
+}
+
 //CalculateExpr calculates value of input expression.
+//Implementation of shunting yard algorithm.
 func CalculateExpr(expr []string) float64 {
 	numStack := new(Stack)
 	strStack := new(StrStack)
@@ -79,72 +103,50 @@ func CalculateExpr(expr []string) float64 {
 				t := *strStack
 				stackToken := IdentifyToken(t[len(*strStack)-1])
 				inputToken := IdentifyToken(token)
+				//Round brackets logic.
+				if inputToken.sign == ")" {
+					for {
+						stackToken = IdentifyToken(t[len(*strStack)-1])
+						if stackToken.sign != "(" {
+							Evaluate(numStack, strStack)
+						} else {
+							strStack.Pop()
+							break
+						}
+					}
+					continue
+				}
 
 				if inputToken.priority > stackToken.priority || stackToken.sign == "(" || stackToken.sign == ")" {
 					strStack.Push(inputToken.sign)
 					continue
 				}
 				for {
-					if len(*strStack) == 0 {
+
+					if len(*strStack) == 0 || stackToken.sign == "(" || stackToken.sign == ")" {
 						strStack.Push(inputToken.sign)
 						break
 					} else {
 						stackToken = IdentifyToken(t[len(*strStack)-1])
 					}
+
+					stackToken = IdentifyToken(t[len(*strStack)-1])
+
 					if inputToken.priority <= stackToken.priority && stackToken.sign != "(" && stackToken.sign != ")" {
-						op, _ := strStack.Pop()
-						switch op {
-						case "+":
-							num2, _ := numStack.Pop()
-							num1, _ := numStack.Pop()
-							numStack.Push(num1 + num2)
-						case "-":
-							num2, _ := numStack.Pop()
-							num1, _ := numStack.Pop()
-							numStack.Push(num1 - num2)
-						case "*":
-							num2, _ := numStack.Pop()
-							num1, _ := numStack.Pop()
-							numStack.Push(num1 * num2)
-						case "/":
-							num2, _ := numStack.Pop()
-							num1, _ := numStack.Pop()
-							numStack.Push(num1 / num2)
-						}
+						Evaluate(numStack, strStack)
 					} else {
 						strStack.Push(inputToken.sign)
-						continue
+						break
 					}
 				}
 			}
 		}
-		fmt.Println(numStack)
-		fmt.Println(strStack)
 	}
-
 	for {
 		if len(*strStack) == 0 {
 			break
 		}
-		op, _ := strStack.Pop()
-		switch op {
-		case "+":
-			num2, _ := numStack.Pop()
-			num1, _ := numStack.Pop()
-			numStack.Push(num1 + num2)
-		case "-":
-			num2, _ := numStack.Pop()
-			num1, _ := numStack.Pop()
-			numStack.Push(num1 - num2)
-		case "*":
-			num2, _ := numStack.Pop()
-			num1, _ := numStack.Pop()
-			numStack.Push(num1 * num2)
-		case "/":
-			num2, _ := numStack.Pop()
-			num1, _ := numStack.Pop()
-			numStack.Push(num1 / num2)
-		}
+		Evaluate(numStack, strStack)
 	}
 	num, _ := numStack.Pop()
 	return num
@@ -153,7 +155,7 @@ func CalculateExpr(expr []string) float64 {
 //CalcHandle handles input URL.
 func CalcHandle(w http.ResponseWriter, r *http.Request) {
 	//Regexp for parse all expression.
-	re := regexp.MustCompile(`[+-]?\d+(\.\d+)?|[-]?[(|)]|[+|-|*|\/?]|[+|-]`)
+	re := regexp.MustCompile(`[+-]?\d+(\.\d+)?|[(|)]|[+|-|*|\/?]|[+|-]`)
 	//Regexp for find errors in expression.
 	invalid := regexp.MustCompile(`^[*|\/]|[+|\-|*|\/]$|[+|\-|*|\/]{3,}`)
 
@@ -162,22 +164,18 @@ func CalcHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	expr := strings.Replace(expression[0], " ", "+", -1)
-	expr = strings.Replace(expr, "-(", "-1*(", -1)
 
-	signs := regexp.MustCompile(`(\d\+\d)`)
-	changeSigns := signs.FindAllString(expr, -1)
-
-	//Trick for accounting unary operators
-	for _, s := range changeSigns {
-		expr = strings.Replace(expr, s, s[:len(s)-1]+"+"+s[len(s)-1:], -1)
-	}
-
-	signs = regexp.MustCompile(`(\d\-\d)`)
-	changeSigns = signs.FindAllString(expr, -1)
-
-	//Trick for accounting unary operators
-	for _, s := range changeSigns {
-		expr = strings.Replace(expr, s, s[:len(s)-1]+"+"+s[len(s)-1:], -1)
+	//Trick for accounting unary operators.
+	signs := regexp.MustCompile(`[\d|\)][\-|+]\d`)
+	for {
+		changeSigns := signs.FindAllString(expr, -1)
+		if len(changeSigns) > 0 {
+			for _, s := range changeSigns {
+				expr = strings.Replace(expr, s, s[:len(s)-1]+"+"+s[len(s)-1:], -1)
+			}
+		} else {
+			break
+		}
 	}
 
 	//If brackets are balanced or
@@ -189,9 +187,6 @@ func CalcHandle(w http.ResponseWriter, r *http.Request) {
 		err := fmt.Errorf("Invalid expression.")
 		fmt.Println(err)
 		return
-	}
-	for _, t := range re.FindAllString(expr, -1) {
-		fmt.Println(string(t))
 	}
 	fmt.Println(CalculateExpr(re.FindAllString(expr, -1)))
 }
