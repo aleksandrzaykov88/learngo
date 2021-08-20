@@ -7,97 +7,82 @@ import (
 	"os"
 )
 
-type treeNode struct {
-	File     os.FileInfo
-	Children []treeNode
+//Leaf is a dir with or without children-cats.
+type Leaf struct {
+	File   os.FileInfo
+	Leaves []Leaf
 }
 
-func (n treeNode) Name() string {
-	if n.File.IsDir() {
-		return n.File.Name()
+//Name returning.
+func (l Leaf) Name() string {
+	if l.File.IsDir() {
+		return l.File.Name()
 	} else {
-		return fmt.Sprintf("%s (%s)", n.File.Name(), n.Size())
+		return fmt.Sprintf("%s (%s)", l.File.Name(), l.Size())
 	}
 }
 
-func (n treeNode) Size() string {
-	if n.File.Size() > 0 {
-		return fmt.Sprintf("%db", n.File.Size())
+//Size returning.
+func (l Leaf) Size() string {
+	if l.File.Size() > 0 {
+		return fmt.Sprintf("%db", l.File.Size())
 	} else {
 		return "empty"
 	}
 }
 
-func getNodes(path string, withFiles bool) ([]treeNode, error) {
+//getLeaves gets all leaves from tree.
+func getLeaves(path string, printFiles bool) []Leaf {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, err
+		return nil
 	}
-
-	var nodes []treeNode
+	var leaves []Leaf
 	for _, file := range files {
-		if !withFiles && !file.IsDir() {
+		if !printFiles && !file.IsDir() {
 			continue
 		}
-
-		node := treeNode{
-			File: file,
-		}
-
+		leaf := Leaf{File: file}
 		if file.IsDir() {
-			children, err := getNodes(path+string(os.PathSeparator)+file.Name(), withFiles)
-			if err != nil {
-				return nil, err
-			}
-
-			node.Children = children
+			children := getLeaves(path+"\\"+file.Name(), printFiles)
+			leaf.Leaves = children
 		}
-
-		nodes = append(nodes, node)
+		leaves = append(leaves, leaf)
 	}
-
-	return nodes, nil
+	return leaves
 }
 
-func printNodes(out io.Writer, nodes []treeNode, parentPrefix string) {
-	var (
-		lastIdx     = len(nodes) - 1
-		prefix      = "├───"
-		childPrefix = "│\t"
-	)
-
-	for i, node := range nodes {
+//printLeaves outputs tree in output stream.
+func printLeaves(out io.Writer, leaves []Leaf, parentPrefix string) {
+	lastIdx := len(leaves) - 1
+	prefix := "├───"
+	childPrefix := "│\t"
+	for i, leaf := range leaves {
 		if i == lastIdx {
 			prefix = "└───"
 			childPrefix = "\t"
 		}
-
-		fmt.Fprint(out, parentPrefix, prefix, node.Name(), "\n")
-
-		if node.File.IsDir() {
-			printNodes(out, node.Children, parentPrefix+childPrefix)
+		fmt.Fprint(out, parentPrefix, prefix, leaf.Name(), "\n")
+		if leaf.File.IsDir() {
+			printLeaves(out, leaf.Leaves, parentPrefix+childPrefix)
 		}
 	}
 }
 
-func dirTree(out io.Writer, path string, printFiles bool) (err error) {
-	nodes, err := getNodes(path, printFiles)
-	if err != nil {
-		return
-	}
-
-	printNodes(out, nodes, "")
-	return
+func dirTree(out io.Writer, path string, printFiles bool) error {
+	leaves := getLeaves(path, printFiles)
+	printLeaves(out, leaves, "")
+	return nil
 }
 
 func main() {
 	out := os.Stdout
-	if !(len(os.Args) == 2 || len(os.Args) == 3) {
-		panic("usage go run main.go . [-f]")
-	}
-	//	path := os.Args[1]
-	//	printFiles := len(os.Args) == 3 && os.Args[2] == "-f"
-	err := dirTree(out, "./testdata/", true)
+	//if !(len(os.Args) == 2 || len(os.Args) == 3) {
+	//	panic("usage go run main.go . [-f]")
+	//}
+	//path := os.Args[1]
+	printFiles := len(os.Args) == 3 && os.Args[2] == "-f"
+	err := dirTree(out, "./testdata/", printFiles)
 	if err != nil {
 		panic(err.Error())
 	}
