@@ -40,8 +40,8 @@ func makeBoundedIntFunc(minimum, maximum int) func(int) int {
 }
 
 type Shaper interface {
-	Drawer // Draw()
-	Filler // Fill(); SetFill()
+	Drawer
+	Filler
 }
 
 type Drawer interface {
@@ -63,6 +63,16 @@ type Sideser interface {
 	SetSides(sides int)
 }
 
+type Rectangler interface {
+	Rect() image.Rectangle
+	SetRect(image.Rectangle)
+}
+
+type Filleder interface {
+	Filled() bool
+	SetFilled(bool)
+}
+
 type shape struct{ fill color.Color }
 
 func newShape(fill color.Color) shape {
@@ -79,6 +89,24 @@ func (shape *shape) SetFill(fill color.Color) {
 		fill = color.Black
 	}
 	shape.fill = fill
+}
+
+type Rectangle struct {
+	width  int
+	height int
+	shape
+}
+
+func NewRectangle(fill color.Color, width, height int) *Rectangle {
+	return &Rectangle{width, height, newShape(fill)}
+}
+
+func (r *Rectangle) Draw(img draw.Image, x, y int) error {
+
+}
+
+func (r *Rectangle) String() string {
+	return fmt.Sprintf("Rectangle(fill=%v)", r.fill)
 }
 
 type Circle struct {
