@@ -23,6 +23,10 @@ func init() {
 	saneSides = makeBoundedIntFunc(3, 60)
 }
 
+func saneRectangle(rect image.Rectangle) image.Rectangle {
+	return rect
+}
+
 func makeBoundedIntFunc(minimum, maximum int) func(int) int {
 	return func(x int) int {
 		valid := x
@@ -40,42 +44,32 @@ func makeBoundedIntFunc(minimum, maximum int) func(int) int {
 }
 
 type Shaper interface {
-	Drawer
-	Filler
-}
-
-type Drawer interface {
+	Fill() color.Color
+	SetFill(fill color.Color)
 	Draw(img draw.Image, x, y int) error
 }
 
-type Filler interface {
-	Fill() color.Color
-	SetFill(fill color.Color)
-}
-
-type Radiuser interface {
+type CircularShaper interface {
+	Shaper
 	Radius() int
 	SetRadius(radius int)
 }
 
-type Sideser interface {
-	Sides() int
-	SetSides(sides int)
-}
-
-type Rectangler interface {
+type RectangularShaper interface {
+	Shaper
 	Rect() image.Rectangle
 	SetRect(image.Rectangle)
-}
-
-type Filleder interface {
 	Filled() bool
 	SetFilled(bool)
 }
 
-type shape struct {
-	fill color.Color
+type RegularPolygonalShaper interface {
+	CircularShaper
+	Sides() int
+	SetSides(sides int)
 }
+
+type shape struct{ fill color.Color }
 
 func newShape(fill color.Color) shape {
 	if fill == nil {
@@ -93,42 +87,43 @@ func (shape *shape) SetFill(fill color.Color) {
 	shape.fill = fill
 }
 
-//RECTANGLE
+//RECTANLGE
 type Rectangle struct {
-	width  int
-	height int
 	shape
+	rect   image.Rectangle
+	filled bool
 }
 
-func NewRectangle(fill color.Color, width, height int) *Rectangle {
-	return &Rectangle{width, height, newShape(fill)}
-}
-
-/*
-func (r *Rectangle) Draw(img draw.Image, x, y int) error {
-
-}
-
-func (r *Rectangle) String() string {
-	return fmt.Sprintf("Rectangle(fill=%v)", r.fill)
+func NewRectangle(fill color.Color, rect image.Rectangle, filled bool) *Rectangle {
+	return &Rectangle{newShape(fill), saneRectangle(rect), filled}
 }
 
 func (r *Rectangle) Rect() image.Rectangle {
-
+	return r.rect
 }
 
-func (r *Rectangle) SetRect(image.Rectangle) {
-
+func (r *Rectangle) SetRect(rect image.Rectangle) {
+	r.rect = saneRectangle(rect)
 }
 
 func (r *Rectangle) Filled() bool {
-
+	return r.filled
 }
 
-func (r *Rectangle) SetFilled(bool) {
-
+func (r *Rectangle) SetFilled(filled bool) {
+	r.filled = filled
 }
-*/
+
+func (r *Rectangle) Draw(img draw.Image) error {
+
+	for py := r.rect.Min.Y; py <= r.rect.Max.Y; py++ {
+		x := image.Point{r.rect.Min.X, py}
+		y := image.Point{r.rect.Max.X, py}
+		drawLine(img, x, y, r.fill)
+	}
+	return nil
+}
+
 //CIRCLE
 type Circle struct {
 	shape
@@ -188,7 +183,22 @@ func (circle *Circle) String() string {
 		circle.radius)
 }
 
-//POLYGON
+func checkBounds(img image.Image, x, y int) error {
+	if !image.Rect(x, y, x, y).In(img.Bounds()) {
+		return fmt.Errorf("%s(): point (%d, %d) is outside the image\n",
+			caller(1), x, y)
+	}
+	return nil
+}
+
+func caller(steps int) string {
+	name := "?"
+	if pc, _, _, ok := runtime.Caller(steps + 1); ok {
+		name = filepath.Base(runtime.FuncForPC(pc).Name())
+	}
+	return name
+}
+
 type RegularPolygon struct {
 	*Circle
 	sides int
@@ -212,7 +222,7 @@ func (polygon *RegularPolygon) Draw(img draw.Image, x, y int) error {
 		return err
 	}
 	points := getPoints(x, y, polygon.sides, float64(polygon.Radius()))
-	for i := 0; i < polygon.sides; i++ { // Draw lines between the apexes
+	for i := 0; i < polygon.sides; i++ {
 		drawLine(img, points[i], points[i+1], polygon.Fill())
 	}
 	return nil
@@ -311,7 +321,7 @@ func FilledImage(width, height int, fill color.Color) draw.Image {
 	return img
 }
 
-func DrawShapes(img draw.Image, x, y int, shapes ...Drawer) error {
+func DrawShapes(img draw.Image, x, y int, shapes ...Shaper) error {
 	for _, shape := range shapes {
 		if err := shape.Draw(img, x, y); err != nil {
 			return err
@@ -340,20 +350,4 @@ func SaveImage(img image.Image, filename string) error {
 	}
 	return fmt.Errorf("shapes.SaveImage(): '%s' has an unrecognized "+
 		"suffix", filename)
-}
-
-func checkBounds(img image.Image, x, y int) error {
-	if !image.Rect(x, y, x, y).In(img.Bounds()) {
-		return fmt.Errorf("%s(): point (%d, %d) is outside the image\n",
-			caller(1), x, y)
-	}
-	return nil
-}
-
-func caller(steps int) string {
-	name := "?"
-	if pc, _, _, ok := runtime.Caller(steps + 1); ok {
-		name = filepath.Base(runtime.FuncForPC(pc).Name())
-	}
-	return name
 }

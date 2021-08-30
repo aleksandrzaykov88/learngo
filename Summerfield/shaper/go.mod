@@ -1,3 +1,3 @@
-module shapes
+module shaper
 
 go 1.16

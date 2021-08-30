@@ -6,10 +6,10 @@ import (
 )
 
 func main() {
-	img := image.NewRGBA(image.Rect(0, 0, 100, 100))
-	red := color.RGBA{0xFF, 0, 0, 0xFF}
-	circ := NewCircle(red, 25)
-	circ.Fill()
-	circ.Draw(img, 50, 50)
-	SaveImage(img, "test.png")
+	img := FilledImage(420, 220, image.White)
+	fill := color.RGBA{200, 200, 200, 0xFF}
+	rectangle := NewRectangle(fill, image.Rect(0, 0, 420, 220), true)
+	rectangle.SetFilled(true)
+	rectangle.Draw(img)
+	SaveImage(img, "rectangle.png")
 }
