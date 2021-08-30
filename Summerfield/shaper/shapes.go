@@ -73,7 +73,9 @@ type Filleder interface {
 	SetFilled(bool)
 }
 
-type shape struct{ fill color.Color }
+type shape struct {
+	fill color.Color
+}
 
 func newShape(fill color.Color) shape {
 	if fill == nil {
@@ -91,6 +93,7 @@ func (shape *shape) SetFill(fill color.Color) {
 	shape.fill = fill
 }
 
+//RECTANGLE
 type Rectangle struct {
 	width  int
 	height int
@@ -101,6 +104,7 @@ func NewRectangle(fill color.Color, width, height int) *Rectangle {
 	return &Rectangle{width, height, newShape(fill)}
 }
 
+/*
 func (r *Rectangle) Draw(img draw.Image, x, y int) error {
 
 }
@@ -109,6 +113,23 @@ func (r *Rectangle) String() string {
 	return fmt.Sprintf("Rectangle(fill=%v)", r.fill)
 }
 
+func (r *Rectangle) Rect() image.Rectangle {
+
+}
+
+func (r *Rectangle) SetRect(image.Rectangle) {
+
+}
+
+func (r *Rectangle) Filled() bool {
+
+}
+
+func (r *Rectangle) SetFilled(bool) {
+
+}
+*/
+//CIRCLE
 type Circle struct {
 	shape
 	radius int
@@ -167,22 +188,7 @@ func (circle *Circle) String() string {
 		circle.radius)
 }
 
-func checkBounds(img image.Image, x, y int) error {
-	if !image.Rect(x, y, x, y).In(img.Bounds()) {
-		return fmt.Errorf("%s(): point (%d, %d) is outside the image\n",
-			caller(1), x, y)
-	}
-	return nil
-}
-
-func caller(steps int) string {
-	name := "?"
-	if pc, _, _, ok := runtime.Caller(steps + 1); ok {
-		name = filepath.Base(runtime.FuncForPC(pc).Name())
-	}
-	return name
-}
-
+//POLYGON
 type RegularPolygon struct {
 	*Circle
 	sides int
@@ -334,4 +340,20 @@ func SaveImage(img image.Image, filename string) error {
 	}
 	return fmt.Errorf("shapes.SaveImage(): '%s' has an unrecognized "+
 		"suffix", filename)
+}
+
+func checkBounds(img image.Image, x, y int) error {
+	if !image.Rect(x, y, x, y).In(img.Bounds()) {
+		return fmt.Errorf("%s(): point (%d, %d) is outside the image\n",
+			caller(1), x, y)
+	}
+	return nil
+}
+
+func caller(steps int) string {
+	name := "?"
+	if pc, _, _, ok := runtime.Caller(steps + 1); ok {
+		name = filepath.Base(runtime.FuncForPC(pc).Name())
+	}
+	return name
 }
