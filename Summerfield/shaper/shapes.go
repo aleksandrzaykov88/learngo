@@ -114,12 +114,19 @@ func (r *Rectangle) SetFilled(filled bool) {
 	r.filled = filled
 }
 
-func (r *Rectangle) Draw(img draw.Image) error {
-
+func (r *Rectangle) Draw(img draw.Image, x, y int) error {
 	for py := r.rect.Min.Y; py <= r.rect.Max.Y; py++ {
-		x := image.Point{r.rect.Min.X, py}
-		y := image.Point{r.rect.Max.X, py}
-		drawLine(img, x, y, r.fill)
+		var d1, d2 int
+		if py < 5 {
+			d1 = r.rect.Min.Y + 5 - py
+		} else if py > r.rect.Max.Y-5 {
+			d2 = py - (r.rect.Max.Y - 5)
+		} else {
+			d1 = 0
+		}
+		a := image.Point{r.rect.Min.X + x + d2, py + y}
+		b := image.Point{r.rect.Max.X + x - d1, py + y}
+		drawLine(img, a, b, r.fill)
 	}
 	return nil
 }
