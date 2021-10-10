@@ -99,10 +99,24 @@ func (sm safeMap) run() {
 		}
 	}
 }
+
 func main() {
 	sm := New()
 	sm.Insert("1", "Bad")
 	fmt.Println(sm.Find("1"))
 	fmt.Println(sm.Len())
-	//ToDo: прочитать всё, update, remove, end
+
+	updater := func(value interface{}, found bool) interface{} {
+		if found {
+			return "Good"
+		}
+		return 1
+	}
+	sm.Update("1", updater)
+	fmt.Println(sm.Find("1"))
+	sm.Insert("2", "Bad")
+	sm.Insert("3", "Neutral")
+	fmt.Println(sm.Find("3"))
+	sm.Delete("3")
+	fmt.Println(sm.Close())
 }
