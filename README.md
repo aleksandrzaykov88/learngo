@@ -8,6 +8,7 @@ My Golang Progress
 Сайты:
 -http://golang-book.ru/
 -A Tour of Go
+-Effective Go
 
 Видео:
 -Курс Гоши Дударя по созданию веб-сайта на GO: https://www.youtube.com/watch?v=OcWMQPPOq-0
