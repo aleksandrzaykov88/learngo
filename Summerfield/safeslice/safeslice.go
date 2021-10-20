@@ -41,14 +41,14 @@ func (ss safeSlice) Delete(key int) {
 	ss <- commandData{action: remove, key: key}
 }
 
-type atValue struct {
+type atKey struct {
 	value interface{}
 }
 
 func (ss safeSlice) At(key int) (value interface{}) {
 	reply := make(chan interface{})
 	ss <- commandData{action: find, key: key, result: reply}
-	result := (<-reply).(atValue)
+	result := (<-reply).(atKey)
 	return result.value
 }
 
@@ -83,13 +83,13 @@ func (ss safeSlice) run() {
 		case remove:
 			store = append(store[:command.key], store[command.key+1:]...)
 		case find:
-			value := store[command.key]
-			command.result <- atValue{value}
+			key := store[command.key]
+			command.result <- atKey{key}
 		case length:
 			command.result <- len(store)
 		case update:
-			value := store[command.key]
-			store[command.key] = command.updater(value)
+			key := store[command.key]
+			store[command.key] = command.updater(key)
 		case end:
 			close(ss)
 			command.data <- store
@@ -105,6 +105,10 @@ func main() {
 	ss.Delete(1)
 	fmt.Println(ss.At(0))
 	fmt.Println(ss.Len())
-
+	updater := func(value interface{}) interface{} {
+		return 5
+	}
+	ss.Update(0, updater)
+	fmt.Println(ss.At(0))
 	ss.Close()
 }
