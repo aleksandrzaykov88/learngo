@@ -33,10 +33,12 @@ const (
 	update
 )
 
+//Append adds element to slice
 func (ss safeSlice) Append(value interface{}) {
 	ss <- commandData{action: insert, value: value}
 }
 
+//Delete removes element from slice
 func (ss safeSlice) Delete(key int) {
 	ss <- commandData{action: remove, key: key}
 }
@@ -45,6 +47,7 @@ type atKey struct {
 	value interface{}
 }
 
+//Ar returns value by inout key
 func (ss safeSlice) At(key int) (value interface{}) {
 	reply := make(chan interface{})
 	ss <- commandData{action: find, key: key, result: reply}
@@ -52,28 +55,33 @@ func (ss safeSlice) At(key int) (value interface{}) {
 	return result.value
 }
 
+//Len returns length of slice
 func (ss safeSlice) Len() int {
 	reply := make(chan interface{})
 	ss <- commandData{action: length, result: reply}
 	return (<-reply).(int)
 }
 
+//Update updates slice value by key using UpdateFunc
 func (ss safeSlice) Update(key int, updater UpdateFunc) {
 	ss <- commandData{action: update, key: key, updater: updater}
 }
 
+//Close closes commandData channel
 func (ss safeSlice) Close() []interface{} {
 	reply := make(chan []interface{})
 	ss <- commandData{action: end, data: reply}
 	return <-reply
 }
 
+//New returns new safeSlice object
 func New() SafeSlice {
 	ss := make(safeSlice)
 	go ss.run()
 	return ss
 }
 
+//run process input commands and starts some action
 func (ss safeSlice) run() {
 	store := make([]interface{}, 0)
 	for command := range ss {
