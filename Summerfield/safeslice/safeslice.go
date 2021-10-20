@@ -79,7 +79,7 @@ func (ss safeSlice) run() {
 	for command := range ss {
 		switch command.action {
 		case insert:
-			store[command.key] = command.value
+			store = append(store, command.value)
 		case remove:
 			store = append(store[:command.key], store[command.key+1:]...)
 		case find:
@@ -98,5 +98,13 @@ func (ss safeSlice) run() {
 }
 
 func main() {
-	fmt.Println("Hi")
+	ss := New()
+	ss.Append(111123)
+	ss.Append(1342342)
+	fmt.Println(ss.At(1))
+	ss.Delete(1)
+	fmt.Println(ss.At(0))
+	fmt.Println(ss.Len())
+
+	ss.Close()
 }
