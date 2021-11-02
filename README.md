@@ -14,7 +14,8 @@ My Golang Progress
 -Курс Гоши Дударя по созданию веб-сайта на GO: https://www.youtube.com/watch?v=OcWMQPPOq-0
 
 Курсы: 
--Stepik: https://stepik.org/course/54403/syllabus
+-https://stepik.org/course/54403/syllabus - Программирование на Golang
+-https://stepik.org/course/100208/syllabus - Go (Golang) - первое знакомство
 
 Другое:
 -Сделал рабочую альфа-версию пет-проекта по бросанию кубов для настольных ролевых игр;
