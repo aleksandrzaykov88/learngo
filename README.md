@@ -16,6 +16,7 @@ My Golang Progress
 Курсы: 
 -https://stepik.org/course/54403/syllabus - Программирование на Golang
 -https://stepik.org/course/100208/syllabus - Go (Golang) - первое знакомство
+-https://stepik.org/course/96832/syllabus - Go на практике
 
 Другое:
 -Сделал рабочую альфа-версию пет-проекта по бросанию кубов для настольных ролевых игр;
