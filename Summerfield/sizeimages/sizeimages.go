@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -18,10 +19,27 @@ const (
 	h = "height"
 )
 
-// htmlImageFormat reads html-file and scans it for img-tags.
-// If in it is no width/height image data
-// htmlImageFormat calls getImageData func.
-func htmlImageFormat(filename string) error {
+var workers = runtime.NumCPU()
+
+func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	argFiles := os.Args[1:] // Get filenames from command args
+	if len(argFiles) > 0 {
+		for _, filename := range argFiles {
+			lines := make(chan string, workers*4) // Creating workers pool
+			done := make(chan struct{}, workers)
+
+			go htmlImageFormat(filename, lines)
+			processLines(done, lines)
+			waitUntil(done)
+			close(done)
+		}
+	}
+}
+
+// htmlImageFormat reads html-file
+func htmlImageFormat(filename string, chLines chan<- string) {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalln(err)
@@ -29,38 +47,49 @@ func htmlImageFormat(filename string) error {
 
 	lines := strings.Split(string(input), "\n")
 
-	for i, line := range lines {
-		reTag := regexp.MustCompile(`<[iI][mM][gG][^>]+>`) // Search img-tag
-		matchTag := reTag.FindStringSubmatch(line)
-		if len(matchTag) > 0 {
-			reAttr := regexp.MustCompile(`src=["’]([^"’]+)["’]`) //Search source from img-tag
-			matchAttr := reAttr.FindStringSubmatch(matchTag[0])
-			if len(matchAttr) >= 1 && strings.HasPrefix(matchAttr[1], "http") {
-				width, height, err := getImageData(matchAttr[1])
-				if err != nil {
-					return err
-				}
-				// If in img-tag no width/height attributes
-				// Write them right in html-file.
-				resW := strings.Contains(matchTag[0], w)
-				if !resW {
-					lines[i] = addHtmlAttr(line, w, width)
-				}
-				resH := strings.Contains(matchTag[0], h)
-				if !resH {
-					lines[i] = addHtmlAttr(lines[i], h, height)
-				}
-			}
-		}
+	for _, line := range lines {
+		chLines <- line
 	}
+	close(chLines)
 
+	// TODO:
 	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(filename, []byte(output), 0644)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
 
-	return nil
+// processLines scans input lines for img-tags.
+// If in it is no width/height image data
+// processLines calls getImageData func.
+func processLines(done chan<- struct{}, lines <-chan string) {
+	for i := 0; i < workers; i++ {
+		go func() {
+			for line := range lines {
+				reTag := regexp.MustCompile(`<[iI][mM][gG][^>]+>`) // Search img-tag
+				matchTag := reTag.FindStringSubmatch(line)
+				if len(matchTag) > 0 {
+					reAttr := regexp.MustCompile(`src=["’]([^"’]+)["’]`) //Search source from img-tag
+					matchAttr := reAttr.FindStringSubmatch(matchTag[0])
+					if len(matchAttr) >= 1 && strings.HasPrefix(matchAttr[1], "http") {
+						width, height, _ := getImageData(matchAttr[1])
+						// If in img-tag no width/height attributes
+						// Write them right in html-file.
+						resW := strings.Contains(matchTag[0], w)
+						if !resW {
+							fmt.Println(addHtmlAttr(line, w, width))
+						}
+						resH := strings.Contains(matchTag[0], h)
+						if !resH {
+							fmt.Println(addHtmlAttr(line, h, height))
+						}
+					}
+				}
+			}
+			done <- struct{}{}
+		}()
+	}
 }
 
 // getImageData checks img-link and get image properties.
@@ -92,20 +121,8 @@ func addHtmlAttr(link string, attr string, value int) string {
 	return fLink + " " + fullAttr + ">" + sLink
 }
 
-func main() {
-	err := htmlImageFormat("test.html")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	argFiles := os.Args[1:] // Get filenames from command args
-	if len(argFiles) > 0 {
-		for _, filename := range argFiles {
-			htmlImageFormat(filename)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-		}
+func waitUntil(done <-chan struct{}) {
+	for i := 0; i < workers; i++ {
+		<-done
 	}
 }
