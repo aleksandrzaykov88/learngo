@@ -1,9 +1,9 @@
 package main
 
 import (
-	circle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/circle"
-	rectangle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/rectangle"
-	triangle "github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/triangle"
+	"github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/circle"
+	"github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/rectangle"
+	"github.com/aleksandrzaykov88/learngo/Zhashkevych/geometric_shapes/triangle"
 )
 
 type GeometricShape interface {
