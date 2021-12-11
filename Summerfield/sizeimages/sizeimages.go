@@ -10,6 +10,7 @@ import (
 	"os"
 	"regexp"
 	"runtime"
+	"safemap/Summerfield/sizeimages/safeslice"
 	"strconv"
 	"strings"
 )
@@ -19,27 +20,52 @@ const (
 	h = "height"
 )
 
+// line of file and its index
+type line struct {
+	index int
+	text  string
+}
+
+// changeString contains old and new lines
+type changeString struct {
+	filename  string
+	oldString string
+	newString string
+	index     int
+}
+
 var workers = runtime.NumCPU()
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	var ss = safeslice.New()
+
 	argFiles := os.Args[1:] // Get filenames from command args
+
+	fileDone := make(chan struct{})
 	if len(argFiles) > 0 {
 		for _, filename := range argFiles {
-			lines := make(chan string, workers*4) // Creating workers pool
-			done := make(chan struct{}, workers)
+			go func(filename string) {
+				lines := make(chan line, workers*4)
+				done := make(chan struct{}, workers)
 
-			go htmlImageFormat(filename, lines)
-			processLines(done, lines)
-			waitUntil(done)
-			close(done)
+				go htmlImageFormat(filename, lines)
+				processLines(done, lines, filename, ss)
+				waitUntil(done)
+				close(done)
+				fileDone <- struct{}{}
+
+			}(filename)
 		}
+		waitFileUntil(fileDone, len(argFiles))
 	}
+
+	fmt.Println(ss.Len())
 }
 
-// htmlImageFormat reads html-file
-func htmlImageFormat(filename string, chLines chan<- string) {
+// htmlImageFormat reads html-file and sending lines into lines channel
+func htmlImageFormat(filename string, chLines chan<- line) {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalln(err)
@@ -47,12 +73,11 @@ func htmlImageFormat(filename string, chLines chan<- string) {
 
 	lines := strings.Split(string(input), "\n")
 
-	for _, line := range lines {
-		chLines <- line
+	for i, l := range lines {
+		chLines <- line{i, l}
 	}
 	close(chLines)
 
-	// TODO:
 	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(filename, []byte(output), 0644)
 	if err != nil {
@@ -63,12 +88,12 @@ func htmlImageFormat(filename string, chLines chan<- string) {
 // processLines scans input lines for img-tags.
 // If in it is no width/height image data
 // processLines calls getImageData func.
-func processLines(done chan<- struct{}, lines <-chan string) {
+func processLines(done chan<- struct{}, lines <-chan line, filename string, ss safeslice.SafeSlice) {
 	for i := 0; i < workers; i++ {
 		go func() {
 			for line := range lines {
 				reTag := regexp.MustCompile(`<[iI][mM][gG][^>]+>`) // Search img-tag
-				matchTag := reTag.FindStringSubmatch(line)
+				matchTag := reTag.FindStringSubmatch(line.text)
 				if len(matchTag) > 0 {
 					reAttr := regexp.MustCompile(`src=["’]([^"’]+)["’]`) //Search source from img-tag
 					matchAttr := reAttr.FindStringSubmatch(matchTag[0])
@@ -76,13 +101,17 @@ func processLines(done chan<- struct{}, lines <-chan string) {
 						width, height, _ := getImageData(matchAttr[1])
 						// If in img-tag no width/height attributes
 						// Write them right in html-file.
+						newString := line.text
 						resW := strings.Contains(matchTag[0], w)
 						if !resW {
-							fmt.Println(addHtmlAttr(line, w, width))
+							newString = addHtmlAttr(newString, w, width)
 						}
 						resH := strings.Contains(matchTag[0], h)
 						if !resH {
-							fmt.Println(addHtmlAttr(line, h, height))
+							newString = addHtmlAttr(newString, h, height)
+						}
+						if !resW || !resH {
+							ss.Append(changeString{filename, line.text, newString, line.index})
 						}
 					}
 				}
@@ -121,8 +150,16 @@ func addHtmlAttr(link string, attr string, value int) string {
 	return fLink + " " + fullAttr + ">" + sLink
 }
 
+// waitUntil waits for workers
 func waitUntil(done <-chan struct{}) {
 	for i := 0; i < workers; i++ {
 		<-done
+	}
+}
+
+// waitFileUntil waits for file workers
+func waitFileUntil(fileDone <-chan struct{}, filesCount int) {
+	for i := 0; i < filesCount; i++ {
+		<-fileDone
 	}
 }

@@ -4,8 +4,6 @@ package vector3D
 
 import (
 	"math"
-
-	"github.com/aleksandrzaykov88/learngo/SimpleJavaTasks/math_func/point3D"
 )
 
 //Vector3D describes a vector in 3D space.
