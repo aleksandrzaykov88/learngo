@@ -10,9 +10,10 @@ import (
 	"os"
 	"regexp"
 	"runtime"
-	"safemap/Summerfield/sizeimages/safeslice"
 	"strconv"
 	"strings"
+
+	"github.com/aleksandrzaykov88/learngo/Summerfield/sizeimages/safeslice"
 )
 
 const (
