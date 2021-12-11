@@ -1,6 +1,6 @@
 //vector3D package describes vector in 3D.
 //It also provides some methods to work with it.
-package vector3D
+package main
 
 import (
 	"math"

@@ -1,6 +1,6 @@
 //point3D package describes point in 3D.
 //It also provides some methods to work with it.
-package point3D
+package main
 
 import "fmt"
 
