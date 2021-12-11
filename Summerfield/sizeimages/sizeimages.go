@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/aleksandrzaykov88/learngo/Summerfield/sizeimages/safeslice"
 )
@@ -45,6 +46,7 @@ func main() {
 	argFiles := os.Args[1:] // Get filenames from command args
 
 	fileDone := make(chan struct{})
+
 	if len(argFiles) > 0 {
 		for _, filename := range argFiles {
 			go func(filename string) {
@@ -62,7 +64,44 @@ func main() {
 		waitFileUntil(fileDone, len(argFiles))
 	}
 
-	fmt.Println(ss.Len())
+	var toChange []changeString
+	for i := 0; i < ss.Len(); i++ {
+		toChange = append(toChange, ss.At(i).(changeString))
+	}
+
+	wg := &sync.WaitGroup{}
+	wg.Add(len(argFiles))
+	for _, filename := range argFiles {
+		go replaceStrings(filename, toChange, wg)
+	}
+	wg.Wait()
+
+	fmt.Println("Обработка файлов завершена")
+}
+
+// replaceStrings last func in module.
+// it anew opens files and rewrites required lines
+func replaceStrings(filename string, toChange []changeString, wg *sync.WaitGroup) {
+	defer wg.Done()
+	input, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i := range lines {
+		for _, replace := range toChange {
+			if replace.filename == filename && replace.index == i {
+				lines[i] = replace.newString
+			}
+		}
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(filename, []byte(output), 0644)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 // htmlImageFormat reads html-file and sending lines into lines channel
