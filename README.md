@@ -1,23 +1,23 @@
 # learngo
-My Golang Progress
+## My Golang Progress
 
-Прочитал и прорешал книги:
--HeadFirst: Изучаем GO;
--Язык GO для начинающих Жашкевича;
+### Прочитал и прорешал книги:
+* HeadFirst: Изучаем GO;
+* Язык GO для начинающих Жашкевича;
 
-Сайты:
--http://golang-book.ru/
--A Tour of Go
--Effective Go
+### Сайты:
+* http://golang-book.ru/
+* A Tour of Go;
+* Effective Go;
 
-Видео:
--Курс Гоши Дударя по созданию веб-сайта на GO: https://www.youtube.com/watch?v=OcWMQPPOq-0
+### Видео:
+* Курс Гоши Дударя по созданию веб-сайта на GO: https://www.youtube.com/watch?v=OcWMQPPOq-0
 
-Курсы: 
--https://stepik.org/course/54403/syllabus - Программирование на Golang
--https://stepik.org/course/100208/syllabus - Go (Golang) - первое знакомство
--https://stepik.org/course/96832/syllabus - Go на практике
+### Курсы: 
+* https://stepik.org/course/54403/syllabus - Программирование на Golang;
+* https://stepik.org/course/100208/syllabus - Go (Golang) - первое знакомство;
+* https://stepik.org/course/96832/syllabus - Go на практике;
 
-Другое:
--Сделал рабочую альфа-версию пет-проекта по бросанию кубов для настольных ролевых игр;
--Прошёл бесплатный интенсив Skillbox-а по созданию телеграм-бота;
+### Другое:
+* Сделал рабочую альфа-версию пет-проекта по бросанию кубов для настольных ролевых игр;
+* Прошёл бесплатный интенсив Skillbox-а по созданию телеграм-бота;
