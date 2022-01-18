@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -15,6 +16,7 @@ type TestApiServer struct {
 
 func (s *TestApiServer) CreateUser(ctx context.Context, req *pb.User) (*pb.Response, error) {
 	msg := pb.Response{Msg: "Пользователь создан"}
+	fmt.Println(req)
 	return &msg, nil
 }
 
