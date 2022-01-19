@@ -9,6 +9,7 @@
 * http://golang-book.ru/
 * A Tour of Go;
 * Effective Go;
+* https://sefus.ru/little-go-book/
 
 ### Видео:
 * Курс Гоши Дударя по созданию веб-сайта на GO: https://www.youtube.com/watch?v=OcWMQPPOq-0
