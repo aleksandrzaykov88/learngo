@@ -3,7 +3,8 @@ package fileutil
 import (
 	"io/fs"
 	"path/filepath"
-	"text_changer/arrayutil"
+
+	"github.com/aleksandrzaykov88/learngo/Other/arrayutil"
 
 	"github.com/gabriel-vasile/mimetype"
 )

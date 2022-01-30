@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"text_changer/fileutil"
+	"github.com/aleksandrzaykov88/learngo/Other/fileutil"
 )
 
 // configLog keeps path to log file
