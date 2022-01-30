@@ -10,7 +10,7 @@ import (
 	"github.com/aleksandrzaykov88/learngo/Other/fileutil"
 )
 
-// configLog keeps path to log file
+// configLog keeps path to log-file
 type configLog struct {
 	Path string
 	Name string
