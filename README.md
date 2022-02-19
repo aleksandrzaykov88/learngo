@@ -4,6 +4,7 @@
 ### Книги:
 * HeadFirst: Изучаем GO;
 * Язык GO для начинающих Жашкевича;
+* Programming in Go. Mark Summerfield
 
 ### Сайты:
 * http://golang-book.ru/
